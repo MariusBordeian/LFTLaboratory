@@ -1,0 +1,18 @@
+5
+S N1 F2 N3 N4 
+3
+a b c 
+S
+1
+F2 
+S -> aN1
+S -> cN3
+N1 -> aN1
+N1 -> bS
+N1 -> cF2
+N1 -> c
+N4 -> aF2
+N4 -> a
+N4 -> bF2
+N4 -> b
+F2 -> epsilon

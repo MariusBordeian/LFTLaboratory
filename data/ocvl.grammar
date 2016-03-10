@@ -1,0 +1,50 @@
+11
+S N1 N2 N3 N4 N5 N6 F7 N8 N9 F10 
+4
+o c v l 
+S
+2
+F7 F10 
+S -> oF10
+S -> o
+S -> cN1
+S -> vF10
+S -> v
+S -> lF10
+S -> l
+N1 -> oN2
+N1 -> cS
+N2 -> oN1
+N2 -> vN3
+N2 -> lN9
+N3 -> oF10
+N3 -> o
+N3 -> cN4
+N3 -> vN2
+N4 -> oF10
+N4 -> o
+N4 -> cN3
+N4 -> lN5
+N5 -> oN6
+N5 -> vN8
+N5 -> lN4
+N6 -> oN5
+N6 -> cF7
+N6 -> c
+F7 -> oF10
+F7 -> o
+F7 -> cN6
+F7 -> vF10
+F7 -> v
+F7 -> lF10
+F7 -> l
+N8 -> oF10
+N8 -> o
+N8 -> cN9
+N8 -> vN5
+N9 -> oF10
+N9 -> o
+N9 -> cN8
+N9 -> lN2
+F7 -> epsilon
+F10 -> epsilon

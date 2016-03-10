@@ -1,0 +1,7 @@
+﻿  Source.cpp
+  ReaderST.cpp
+d:\cloud\tuiasi\now\lft\lab\lab01\prob1\readerst.cpp(422): warning C4018: '<': signed/unsigned mismatch
+d:\cloud\tuiasi\now\lft\lab\lab01\prob1\readerst.cpp(470): warning C4018: '<': signed/unsigned mismatch
+  ReaderAF.cpp
+  Generating Code...
+  Prob1.vcxproj -> D:\Cloud\TUIASI\now\LFT\Lab\Lab01\Debug\Solution.exe
