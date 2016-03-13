@@ -1,5 +1,6 @@
 #include "ReaderAF.h"
 #include "ReaderST.h"
+#include "RegularExpression.h"
 #include <iostream>
 #include <string>
 
@@ -108,8 +109,7 @@ int ST(string filePath)
 		cout << "\n\n\
 			0 : previous\n\
 			1 : show matrix\n\
-			2 : show eps_inch\n\
-			3 : ST2AFD\n";
+			2 : ST2AFD\n";
 		cout << "\nselect option : ";
 		cin >> user;
 		cin.clear();
@@ -124,9 +124,6 @@ int ST(string filePath)
 			st.showPathsMatrix();
 			break;
 		case 2:
-			st.showEpsInch();
-			break;
-		case 3:
 			st.ST2AFD();
 			break;
 		default:
@@ -138,36 +135,52 @@ int ST(string filePath)
 
 	return 0;
 }
-
-string pas_1(string w1)
+int RE()
 {
-	string w2 = w1;
+	RegularExpression re;
+	int user;
+	string expression;
+	do
+	{
+		user = 3;
+		cout << "\n\n\
+			0 : previous\n\
+			1 : Enter expression:\n";
+		cout << "\nselect option : ";
+		cin >> user;
+		cin.clear();
+		cin.ignore(256, '\n');
 
+		switch (user)
+		{
+		case 0:
+			cout << "\nsee ya!\n";
+			break;
+		case 1:
+			cin >> expression;
+			cout << endl << "Forma initiala : " << expression;
+			expression = re.completeWithOperators(expression);
+			cout << endl << "Forma completata : " << expression << endl;
+			expression = re.postFixedForm(expression);
+			cout << "Forma postfixata : " << expression << endl;
+			break;
+		default:
+			cout << "\nselect a valid option!\n";
+			break;
+		}
 
+	} while (user != 0);
 
-	return w2;
+	return 0;
 }
-
-string pas_2(string w2)
-{
-	string w3 = w2;
-
-
-
-	return w3;
-}
-
 int main()
 {
-	char path[256] = "..\\data\\";
+	char path[256] = "C:\\Users\\Andre\\Desktop\\LFT\\Lab\\data\\";
 	string filePath(path);
 	auto result = 0;
-	
+
 	int user;
 	string w;
-	string w1; // user input
-	string w2; // complet
-	string w3; // postfixed
 	do
 	{
 		user = -1;
@@ -175,7 +188,7 @@ int main()
 			0 : exit\n\
 			1 : A.F.\n\
 			2 : S.T.\n\
-			3 : RegExpr\n";
+			3 : Regular expression\n";
 		cout << "\nselect option : ";
 		cin >> user;
 		cin.clear();
@@ -199,13 +212,7 @@ int main()
 			result = ST(filePath + w);
 			break;
 		case 3:
-			cout << "\nw1 : ";
-			cin >> w1;
-			w2 = pas_1(w1);
-			cout << "w2 : " << w2 << endl;
-			w3 = pas_2(w2);
-			cout << "w3 : " << w3 << endl;
-			//pas_3(w3);
+			result = RE();
 			break;
 		default:
 			cout << "\nselect a valid option!\n";
@@ -213,7 +220,7 @@ int main()
 		}
 
 	} while (user != 0);
-		
+
 	//system("pause");
 	return result;
 }
