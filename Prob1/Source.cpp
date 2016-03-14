@@ -145,7 +145,7 @@ int RE()
 		user = 3;
 		cout << "\n\n\
 			0 : previous\n\
-			1 : Enter expression:\n";
+			1 : Enter expression: \t eg. : ((a+bc)*bc(d+ab)#)* \n";
 		cout << "\nselect option : ";
 		cin >> user;
 		cin.clear();
