@@ -135,17 +135,26 @@ int ST(string filePath)
 
 	return 0;
 }
+
 int RE()
 {
-	RegularExpression re;
 	int user;
 	string expression;
+
+	cout << endl << "Forma initiala\t\t: ";
+	cin >> expression;
+
+	RegularExpression re(expression);
+	
+	cout << "Forma completata\t: " << re.completeWithOperators() << endl;
+	cout << "Forma postfixata\t: " << re.postFixedForm() << endl;
+
 	do
 	{
 		user = 3;
 		cout << "\n\n\
 			0 : previous\n\
-			1 : Enter expression:\n";
+			1 : Get_S.T.\n";
 		cout << "\nselect option : ";
 		cin >> user;
 		cin.clear();
@@ -157,12 +166,7 @@ int RE()
 			cout << "\nsee ya!\n";
 			break;
 		case 1:
-			cin >> expression;
-			cout << endl << "Forma initiala : " << expression;
-			expression = re.completeWithOperators(expression);
-			cout << endl << "Forma completata : " << expression << endl;
-			expression = re.postFixedForm(expression);
-			cout << "Forma postfixata : " << expression << endl;
+			re.generateST();	// not done!
 			break;
 		default:
 			cout << "\nselect a valid option!\n";
@@ -173,9 +177,10 @@ int RE()
 
 	return 0;
 }
+
 int main()
 {
-	char path[256] = "C:\\Users\\Andre\\Desktop\\LFT\\Lab\\data\\";
+	char path[256] = "..\\data\\";
 	string filePath(path);
 	auto result = 0;
 
@@ -188,7 +193,7 @@ int main()
 			0 : exit\n\
 			1 : A.F.\n\
 			2 : S.T.\n\
-			3 : Regular expression\n";
+			3 : R.E.\n";
 		cout << "\nselect option : ";
 		cin >> user;
 		cin.clear();

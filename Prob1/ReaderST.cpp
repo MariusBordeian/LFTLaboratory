@@ -419,7 +419,7 @@ int ReaderST::ST2AFD()
 void ReaderST::precalcEpsInch()
 {
 	auto len = statesAll.size();
-	for (auto i = 0; i < len; ++i)
+	for (unsigned int i = 0; i < len; ++i)
 	{
 		if (!areStatesEqual(pathsMatrix[i][0], emptyState))
 		{
@@ -467,7 +467,7 @@ vector<string> ReaderST::getEpsInch(string state)
 		}
 		else
 		{
-			for (auto i = 0; i < pathsMatrix[state_i][0].size(); ++i)
+			for (unsigned int i = 0; i < pathsMatrix[state_i][0].size(); ++i)
 			{
 				if (pathsMatrix[state_i][0][i].compare("-") != 0)
 				{

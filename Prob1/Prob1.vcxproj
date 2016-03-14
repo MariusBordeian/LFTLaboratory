@@ -79,11 +79,13 @@
   <ItemGroup>
     <ClCompile Include="ReaderAF.cpp" />
     <ClCompile Include="ReaderST.cpp" />
+    <ClCompile Include="RegularExpression.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ReaderAF.h" />
     <ClInclude Include="ReaderST.h" />
+    <ClInclude Include="RegularExpression.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
