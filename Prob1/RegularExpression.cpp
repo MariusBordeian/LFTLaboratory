@@ -1,63 +1,41 @@
 #include "RegularExpression.h"
 #include <vector>
 #include <stack>
-#include <map>
 #include <string>
-#include <fstream>
-#include <iostream>
-
+#include <tuple>
+#include <algorithm>
 using namespace std;
 
 
-RegularExpression::RegularExpression(string in) { w1_userInput = in; }
+RegularExpression::RegularExpression() { }
 
-RegularExpression::~RegularExpression() { }
-
-string RegularExpression::completeWithOperators() const {
-	string in = w1_userInput;
+string RegularExpression::completeWithOperators(string in) {
 	vector<char> X = { 'a','b','c','d',')','*','#','e','o' };
 	vector<char> Y = { 'a','b','c','d','(','e','o' };
-	int counter = 0;
-
+	string out = "";
 	if (in.size() != 0) {
-		unsigned int i = 1;
-		for (i = 1; i < in.size(); i++)
-		{
-			if (isIn(in[i], Y) && isIn(in[i - 1], X))
-			{
-				counter++;
-			}
-		}
-	}
-	// not efficient but whatever, it works :))
-	string out(in.size() + counter, ' ');
-
-	if (in.size() != 0) {
-		out[0] = in[0];
+		out += in[0];
 		unsigned int i = 1, j = 1;
 		for (i = 1; i < in.size(); i++)
 		{
 			if (isIn(in[i], Y) && isIn(in[i - 1], X))
 			{
-				out[j++] = '.';
+				out += '.';
 			}
-			out[j++] = in[i];
+			out += in[i];
 		}
 	}
 	return out;
 }
 
-string RegularExpression::postFixedForm() const {
-	string in = w2_complete;
+string RegularExpression::postFixedForm(string in) {
 	stack<char> S;
 	string out = "";
 	S.push('_');
-	map<char, int> pos = { { '*',3 },{ '#',3 },{ '.',2 },{ '+',1 },{ '(',0 },{ '_',-1 } };
-	map<char, int> poe = { { '*',3 },{ '#',3 },{ '.',2 },{ '+',1 },{ '(',4 },{ '_',-1 } };
 
 	for (unsigned int i = 0; i < in.size(); i++)
 	{
-		if (isIn(in[i], multime))
+		if (isIn(in[i], sigma))
 			out += in[i];
 		else
 			if (in[i] == ')')
@@ -86,6 +64,91 @@ string RegularExpression::postFixedForm() const {
 	return out;
 }
 
+string RegularExpression::generateST(string in) {
+	stack<tuple<string, string>> stivaST;
+	vector<tuple<string, string, string>> delta;
+	tuple<string, string> M1;
+	tuple<string, string> M2;
+	int stCrt = -1;
+	for (unsigned int i = 0; i < in.size(); i++)
+	{
+		if (isIn(in[i], sigma))
+		{
+			++stCrt;
+			stivaST.push(tuple<string, string>(to_string(stCrt), to_string(stCrt + 1)));
+			if (in[i] != 'o')
+				delta.push_back(tuple<string, string, string>(to_string(stCrt), myToString(in[i]), to_string(stCrt + 1)));
+			++stCrt;
+		}
+		else
+		{
+			switch (in[i])
+			{
+			case '+':
+				M2 = stivaST.top();
+				stivaST.pop();
+				M1 = stivaST.top();
+				stivaST.pop();
+				++stCrt;
+				delta.push_back(tuple<string, string, string>(to_string(stCrt), myToString('e'), get<0>(M1)));
+				delta.push_back(tuple<string, string, string>(to_string(stCrt), myToString('e'), get<0>(M2)));
+				delta.push_back(tuple<string, string, string>(get<1>(M1), myToString('e'), to_string(stCrt + 1)));
+				delta.push_back(tuple<string, string, string>(get<1>(M2), myToString('e'), to_string(stCrt + 1)));
+				stivaST.push(tuple<string, string>(to_string(stCrt), to_string(stCrt + 1)));
+				++stCrt;
+				break;
+			case '.':
+				M2 = stivaST.top();
+				stivaST.pop();
+				M1 = stivaST.top();
+				stivaST.pop();
+				delta.push_back(tuple<string, string, string>(get<1>(M1), myToString('e'), get<0>(M2)));
+				stivaST.push(tuple<string, string>(get<0>(M1), get<1>(M2)));
+				break;
+			case '#':
+				M1 = stivaST.top();
+				stivaST.pop();
+				++stCrt;
+				delta.push_back(tuple<string, string, string>(to_string(stCrt), myToString('e'), get<0>(M1)));
+				delta.push_back(tuple<string, string, string>(get<1>(M1), myToString('e'), get<0>(M1)));
+				delta.push_back(tuple<string, string, string>(get<1>(M1), myToString('e'), to_string(stCrt + 1)));
+				stivaST.push(tuple<string, string>(to_string(stCrt), to_string(stCrt + 1)));
+				++stCrt;
+				break;
+			case '*':
+				M1 = stivaST.top();
+				stivaST.pop();
+				++stCrt;
+				delta.push_back(tuple<string, string, string>(to_string(stCrt), myToString('e'), get<0>(M1)));
+				delta.push_back(tuple<string, string, string>(get<1>(M1), myToString('e'), get<0>(M1)));
+				delta.push_back(tuple<string, string, string>(get<1>(M1), myToString('e'), to_string(stCrt + 1)));
+				delta.push_back(tuple<string, string, string>(to_string(stCrt), myToString('e'), to_string(stCrt + 1)));
+				stivaST.push(tuple<string, string>(to_string(stCrt), to_string(stCrt + 1)));
+				++stCrt;
+				break;
+			}
+		}
+	}
+	M1 = stivaST.top();
+	stivaST.pop();
+	int modulQ;
+	modulQ = stCrt + 1;
+	string q0 = get<0>(M1);
+	string F = get<1>(M1);
+
+	sort(begin(delta), end(delta), [](auto const &t1, auto const &t2) {
+		return atoi(get<0>(t1).c_str()) < atoi(get<0>(t2).c_str());
+	});
+
+	string toBePrinted = "";
+	toBePrinted.append("Initial state : ").append(q0).append("\nFinal state : ").append(F).append("\nDelta : \n");
+	for (unsigned int i = 0; i < delta.size(); i++) {
+		toBePrinted.append(get<0>(delta[i])).append("\t").append(get<1>(delta[i])).append("\t").append(get<2>(delta[i])).append("\n");
+	}
+
+	return toBePrinted;
+}
+
 bool RegularExpression::isIn(char character, vector<char> set) {
 	for (unsigned int i = 0; i < set.size(); i++) {
 		if (set[i] == character) {
@@ -95,125 +158,11 @@ bool RegularExpression::isIn(char character, vector<char> set) {
 	return false;
 }
 
-void RegularExpression::generateST() const
-{
-	auto stCrt = -1;
-	stack<pair<string, string>> stivaST;
-	pair<string, string> M1;
-	pair<string, string> M2;
-	vector<DeltaPairs> delta;
-
-	for (unsigned int i = 0; i < w3_postFixed.length(); ++i)
-	{
-		if (isIn(w3_postFixed[i], multime))
-		{
-			++stCrt;
-			stivaST.push(pair<string, string>(to_string(stCrt), to_string(stCrt + 1)));
-			if (w3_postFixed[i] != 'o')	// multimea "vida"
-			{
-				delta.push_back(DeltaPairs{ to_string(stCrt), to_string(w3_postFixed[i]), to_string(stCrt + 1) });
-			}
-			++stCrt;
-		}
-		else
-		{
-			switch(w3_postFixed[i])
-			{
-			case '+':
-				M2 = stivaST.top();
-				stivaST.pop();
-				M1 = stivaST.top();
-				stivaST.pop();
-				
-				++stCrt;
-
-				delta.push_back(DeltaPairs{ to_string(stCrt), "e", M1.first });
-				delta.push_back(DeltaPairs{ to_string(stCrt), "e", M2.first });
-				delta.push_back(DeltaPairs{ M1.second, "e", to_string(stCrt + 1) });
-				delta.push_back(DeltaPairs{ M2.second, "e", to_string(stCrt + 1) });
-
-				stivaST.push(pair<string, string>(to_string(stCrt), to_string(stCrt + 1)));
-
-				++stCrt;
-
-				break;
-
-			case '.':
-				M2 = stivaST.top();
-				stivaST.pop();
-				M1 = stivaST.top();
-				stivaST.pop();
-
-				delta.push_back(DeltaPairs{ M1.first, "e", M2.second });
-
-				stivaST.push(pair<string, string>(M1.first, M2.second));
-
-				break;
-
-			case '#':
-				M1 = stivaST.top();
-				stivaST.pop();
-
-				++stCrt;
-
-				delta.push_back(DeltaPairs{ to_string(stCrt), "e", M1.first });
-				delta.push_back(DeltaPairs{ M1.second, "e", M1.first });
-				delta.push_back(DeltaPairs{ M1.second, "e", to_string(stCrt + 1) });
-				delta.push_back(DeltaPairs{ to_string(stCrt), "e", to_string(stCrt + 1) });
-
-				stivaST.push(pair<string, string>(to_string(stCrt), to_string(stCrt + 1)));
-
-				++stCrt;
-
-				break;
-
-			case '*':
-				M1 = stivaST.top();
-				stivaST.pop();
-
-				++stCrt;
-
-				delta.push_back(DeltaPairs{ to_string(stCrt), "e", M1.first });
-				delta.push_back(DeltaPairs{ M1.second, "e", M1.first });
-				delta.push_back(DeltaPairs{ M1.second, "e", to_string(stCrt + 1) });
-				delta.push_back(DeltaPairs{ to_string(stCrt), "e", to_string(stCrt + 1) });
-
-				stivaST.push(pair<string, string>(to_string(stCrt), to_string(stCrt + 1)));
-
-				++stCrt;
-
-				break;
-			}
-		}
-	}
-
-	M1 = stivaST.top();
-	stivaST.pop();
-
-	auto nrStari = stCrt + 1;
-	// same Sigma (alfabet) => Sigma = this->Multime
-	// delta 
-	string initialState = M1.first;
-	vector<string> finalStates;
-	finalStates.push_back(M1.second);
-
-	// TODO : create the conf file to write into
-	
-	fstream STFile;
-	string STPath = "..\\data\\" + w1_userInput + ".ST";	// not sure all symbols from w1_userInput is supported as filename
-
-	STFile.open(STPath, ios::out);
-
-	if (STFile.is_open())
-	{
-		// dump method output to STFile aka S.T. config file
-
-		
-		STFile.close();
-		cout << "\ncheck " + STPath << endl;
-	}
-	else
-	{
-		cout << "\nsomething went wrong!\nCould not opet file to write into." << endl;
-	}
+string RegularExpression::myToString(char a) {
+	string s = "";
+	s += a;
+	return s;
 }
+
+
+RegularExpression::~RegularExpression() {}

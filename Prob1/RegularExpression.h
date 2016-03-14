@@ -1,35 +1,26 @@
 #pragma once
+#include "string"
 #include "vector"
+#include <map>
 
 using namespace std;
 
-typedef struct triplete {
-	string qx;
-	string a;
-	string qy;
-} DeltaPairs;
-
 class RegularExpression
 {
+
 public:
-	vector<char> Sigma = { 'a','b','c','d' };
-	vector<char> multime = { 'a','b','c','d','e','o' };
+	vector<char> sigma = { 'a','b','c','d','e','o' };
+	map<char, int> pos = { { '*',3 },{ '#',3 },{ '.',2 },{ '+',1 },{ '(',0 },{ '_',-1 } };
+	map<char, int> poe = { { '*',3 },{ '#',3 },{ '.',2 },{ '+',1 },{ '(',4 },{ '_',-1 } };
 
-	explicit RegularExpression(string);
+	explicit RegularExpression();
+
+	string completeWithOperators(string);
+	string postFixedForm(string);
+	string generateST(string);
+	string myToString(char);
+	bool isIn(char, vector<char>);
+
 	~RegularExpression();
-
-	string completeWithOperators() const;
-	string postFixedForm() const;
-	string getUserString() const { return w1_userInput; }
-	string getCompleteForm() const { return w2_complete; }
-	string getPostFixed() const { return w3_postFixed; }
-
-	static bool isIn(char, vector<char>);
-	void generateST() const;
-
-private:
-	string w1_userInput;
-	string w2_complete;
-	string w3_postFixed;
 };
 
