@@ -33,7 +33,7 @@ public:
 	vector<string> getEpsInch(vector<string> states);
 	string vectorToString(vector<string>);
 
-
+	string Eps = "E"; // eps
 	string filePath;
 	string currentState;
 	string initialState;

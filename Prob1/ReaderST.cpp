@@ -345,7 +345,7 @@ int ReaderST::ST2AFD()
 				sort(queue_state.begin(), queue_state.end());
 				afd_states.push_back(queue_state);
 				for (unsigned int i = 0; i < symbols.size(); i++) {
-					if (symbols[i].compare("eps") != 0) {
+					if (symbols[i].compare(Eps) != 0) {
 						vector<string> symbolStates=getNextStates(queue_state, symbols[i]);
 						vector<string> eps_inch_per_symbol_state = getEpsInch(symbolStates);
 
@@ -367,7 +367,7 @@ int ReaderST::ST2AFD()
 						if(eps_inch_per_symbol_state.size()!=0){
 							sort(eps_inch_per_symbol_state.begin(), eps_inch_per_symbol_state.end());
 							string row = "";
-							row.append(vectorToString(queue_state)).append("\t").append(symbols[i]).append("\t").append(vectorToString(eps_inch_per_symbol_state)).append("\n");
+							row.append(vectorToString(queue_state)).append("\t").append(symbols[i]).append("\t").append(vectorToString(eps_inch_per_symbol_state));
 							afdMatrixString.push_back(row);
 						}
 					}
@@ -384,7 +384,7 @@ int ReaderST::ST2AFD()
 		AFDFile << endl << symbols.size()-1 << endl;
 
 		for (unsigned int i = 0; i < symbols.size(); i++) {
-			if(symbols[i].compare("eps")!=0)
+			if(symbols[i].compare(Eps)!=0)
 				AFDFile << symbols[i] << " ";
 		}
 
@@ -400,6 +400,8 @@ int ReaderST::ST2AFD()
 
 		for (unsigned int i = 0; i < afdMatrixString.size(); i++) {
 			AFDFile << afdMatrixString[i];
+			if (i != afdMatrixString.size() - 1)
+				AFDFile << endl;
 		}
 
 		AFDFile.close();
