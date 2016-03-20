@@ -1,9 +1,8 @@
 #include "RegularExpression.h"
-#include <vector>
+#include "Util.h"
 #include <stack>
 #include <map>
 #include <tuple>
-#include <string>
 #include <fstream>
 #include <iostream>
 #include <algorithm>

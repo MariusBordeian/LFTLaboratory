@@ -6,8 +6,17 @@
 
 using namespace std;
 
-int AF(string filePath)
+int AF()
 {
+	char path[256] = "..\\data\\";
+	string filePath_2(path);
+	string filePath(path);
+	string w;
+	cout << "enter a filename from " + filePath + " : ";
+	//cout << filePath << endl;
+	cin >> w;
+	filePath += w;
+
 	ReaderAF r(filePath);
 
 	if (r.readConfig() == 1)
@@ -20,7 +29,6 @@ int AF(string filePath)
 	r.showPathsMatrix();
 
 	int user;
-	string w;
 	string s;
 	do
 	{
@@ -33,7 +41,8 @@ int AF(string filePath)
 			4 : show path for w from initial state\n\
 			5 : show path for w from given state\n\
 			6 : genrate Grammar\n\
-			7 : minimize AFD\n";
+			7 : minimize AFD\n\
+			8 : compare\n";
 		cout << "\nselect option : ";
 		cin >> user;
 		cin.clear();
@@ -79,19 +88,47 @@ int AF(string filePath)
 			r.generateGrammar();
 			break;
 		case 7:
-			ReaderAF r_min(r);
-			r_min.minimizeAFD();
-			r_min.showPathsMatrix();
-			break;		
+		{
+			ReaderAF r_(r);
+			r_.minimizeAFD();
+			r_.showPathsMatrix();
+		}
+			break;	
+		case 8:
+		{
+			cout << "enter second AFD filename, from " + filePath_2 + " : ";
+			//cout << filePath << endl;
+			cin >> w;
+			filePath_2 += w;
+
+			ReaderAF r_1(filePath);
+			r_1.readConfig();
+			ReaderAF r_2(filePath_2);
+			r_2.readConfig();
+			r_2.showPathsMatrix();
+
+			cout << endl << (r_1 == r_2 ? filePath + " is equivalent with " + filePath_2 : filePath + " is NOT equivalent with " + filePath_2) << endl;
+		}
+			break;
 		}
 
+		filePath_2 = string(path);
+		filePath = string(path);
 	} while (user != 0);
 
 	return 0;
 }
 
-int ST(string filePath)
+int ST()
 {
+	char path[256] = "..\\data\\";
+	string filePath(path);
+	string w;
+	cout << "enter a filename from " + filePath + " : ";
+	//cout << filePath << endl;
+	cin >> w;
+	filePath += w;
+
 	ReaderST st(filePath);
 
 	if (st.readConfig() == 1)
@@ -104,7 +141,6 @@ int ST(string filePath)
 	st.showPathsMatrix();
 
 	int user;
-	string w;
 	string s;
 	do
 	{
@@ -184,8 +220,6 @@ int RE()
 
 int main()
 {
-	char path[256] = "..\\data\\";
-	string filePath(path);
 	auto result = 0;
 
 	int user;
@@ -209,16 +243,10 @@ int main()
 			cout << "\nbye!\n";
 			break;
 		case 1:
-			cout << "enter a filename from " + filePath + " : ";
-			//cout << filePath << endl;
-			cin >> w;
-			result = AF(filePath + w);
+			result = AF();
 			break;
 		case 2:
-			cout << "enter a filename from " + filePath + " : ";
-			//cout << filePath << endl;
-			cin >> w;
-			result = ST(filePath + w);
+			result = ST();
 			break;
 		case 3:
 			result = RE();

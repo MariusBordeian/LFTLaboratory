@@ -1,21 +1,14 @@
 #include "ReaderAF.h"
+#include "Util.h"
 #include <iostream>
-#include <string>
-#include <sstream>
+#include <queue>
 
 using namespace std;
 
-ReaderAF::ReaderAF(string path): cntStatesAll(0), cntSymb(0), cntStatesFinal(0), indexCurrentState(0)
+ReaderAF::ReaderAF(string path): cntStatesAll(0), cntSymb(0), cntStatesFinal(0), cntPaths(0), indexCurrentState(0)
 {
 	filePath = path;
 	confFile.open(filePath, ios::in);
-	
-	if (!confFile)
-	{
-		cout << "Wrong file path!";
-		system("pause");
-		exit(1);
-	}
 }
 
 ReaderAF::~ReaderAF()
@@ -51,37 +44,6 @@ ReaderAF::~ReaderAF()
 	statesInfo.finalized = nullptr;
 	statesInfo.unfinalized = nullptr;
 	//*/
-}
-
-vector<string>& ReaderAF::split(const string &s, char delim, vector<string> &elems) const
-{
-	stringstream ss(s);
-	string item;
-	while (getline(ss, item, delim)) {
-		elems.push_back(item);
-	}
-	return elems;
-}
-
-vector<string> ReaderAF::split(const string &s, char delim) const
-{
-	vector<string> elems;
-	split(s, delim, elems);
-	return elems;
-}
-
-vector<string> ReaderAF::arraysMinus(const vector<string> fromArray, const vector<string> whatArray)
-{
-	vector<string> result;
-	for (unsigned int it = 0; it < fromArray.size(); ++it)
-	{
-		if (!isIn(fromArray[it], whatArray))
-		{
-			result.push_back(fromArray[it]);
-		}
-	}
-	
-	return result;
 }
 
 int ReaderAF::indexOfSymb(string c) const
@@ -124,26 +86,6 @@ int ReaderAF::indexOfStateFinal(string c) const
 		}
 	}
 	return (f == 0) ? -1 : i;
-}
-
-bool ReaderAF::isIn(string a, vector<string> v)
-{
-	for (unsigned int i = 0; i < v.size(); ++i)
-	{
-		if (v[i].compare(a) == 0)
-			return true;
-	}
-	return false;
-}
-
-bool ReaderAF::isIn(int a, vector<int> v)
-{
-	for (unsigned int i = 0; i < v.size(); ++i)
-	{
-		if (v[i] == a)
-			return true;
-	}
-	return false;
 }
 
 bool ReaderAF::isEmpty(vector<string> vec)
@@ -377,7 +319,7 @@ void ReaderAF::updateFinalized()
 }
 
 void ReaderAF::updateUnfinalized()
-{	// accesibil, not final, si dead-end
+{	
 	if (statesInfo.inaccesible.size() == 0)
 		updateAccesible();
 
@@ -439,6 +381,45 @@ void ReaderAF::analyzeStates()
 	cout << "\nunfinalized states\t: ";
 	for (auto i = 0; i < cntStatesAll; i++)
 		cout << statesInfo.unfinalized[i] << " ";
+}
+
+map<int, char> ReaderAF::getLabeledStated() const
+{
+	map<int, char> labels;
+
+	for (auto i = 0; i < cntStatesAll; i++)
+	{
+		if (isIn(statesAll[i], statesFinal))
+		{
+			labels.insert(pair<int, char>(i, 'F'));
+		}
+		else
+		{
+			labels.insert(pair<int, char>(i, 'N'));
+		}
+	}
+
+	return labels;
+}
+
+unsigned int ReaderAF::nrOfPaths()
+{
+	unsigned int counter = 0;
+
+	for (auto i = 0; i < cntStatesAll; i++)
+	{
+		for (auto j = 0; j < cntSymb; j++)
+		{
+			if (pathsMatrix[i][j].compare("-") != 0)
+			{
+				counter++;
+			}
+		}
+	}
+
+	cntPaths = counter;
+
+	return counter;
 }
 
 string ReaderAF::getNextState(string symb)
@@ -552,6 +533,8 @@ int ReaderAF::readConfig()
 			return 1;
 		}
 	}
+
+	nrOfPaths();
 
 	return 0;
 }
@@ -757,6 +740,8 @@ void ReaderAF::removeUselessStates()
 		currentState = initialState;
 		indexCurrentState = indexOfState(initialState);
 
+		nrOfPaths();
+
 		updateAccesible();
 		updateInaccesible();
 		updateFinalized();
@@ -882,4 +867,98 @@ void ReaderAF::generateGrammar()	// TODO: S -> epsilon => S'(just not to remove 
 	{
 		cout << "\nError create grammar file!\n";
 	}
+}
+
+bool operator==(const ReaderAF & lhs, const ReaderAF & rhs)
+{
+	auto result = true;
+	auto l(lhs);
+	auto r(rhs);
+
+	if (l.symbols.size() == r.symbols.size() && areEqual(l.symbols, r.symbols))
+	{
+		l.minimizeAFD();
+		r.minimizeAFD();
+		
+		if ( l.statesAll.size() == r.statesAll.size() && 
+			l.statesFinal.size() == r.statesFinal.size() && 
+			l.cntPaths == r.cntPaths)
+		{
+			vector<bool> l_check;
+			vector<bool> r_check;
+			for (auto i = 0; i < l.cntStatesAll; i++)
+			{
+				l_check.push_back(false);
+				r_check.push_back(false);
+			}
+
+			queue<int> l_q;
+			queue<int> r_q;
+
+			l_q.push(l.indexOfState(l.initialState));
+			r_q.push(r.indexOfState(r.initialState));
+
+			map<int, char> l_map = l.getLabeledStated();
+			map<int, char> r_map = r.getLabeledStated();
+
+			while (!l_q.empty() && !r_q.empty())
+			{
+				auto l_index = l_q.front();
+				l_q.pop();
+				l_check[l_index] = true;
+
+				auto r_index = r_q.front();
+				r_q.pop();
+				r_check[r_index] = true;
+
+				if (l_map.at(l_index) == r_map.at(r_index))
+				{
+					vector<string> l_paths = l.pathsMatrix[l_index];
+					vector<string> r_paths = r.pathsMatrix[r_index];
+
+					for (auto i = 0; i < l.cntSymb; i++)
+					{
+						auto l_localIndex = l.indexOfState(l_paths[i]);
+						auto r_localIndex = r.indexOfState(r_paths[i]);
+
+						if (l_localIndex != -1 && r_localIndex != -1)
+						{
+							if (!l_check[l_localIndex] && !r_check[r_localIndex])
+							{
+								l_q.push(l_localIndex);
+								r_q.push(r_localIndex);
+							}
+							else
+							{
+								if (!l_check[l_localIndex] != !r_check[r_localIndex])
+								{
+									result = false;
+									break;
+								}
+							}
+						}
+						else
+						{
+							if ( l_localIndex != r_localIndex)
+							{
+								result = false;
+								break;
+							}
+						}
+					}
+				}
+				else
+				{
+					result = false;
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		result = false;
+	}
+
+	return result;
 }

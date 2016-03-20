@@ -1,7 +1,8 @@
 #pragma once
 
-#include<fstream>
+#include <fstream>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -14,6 +15,8 @@ typedef struct triplete2 {
 class ReaderAF
 {
 public:
+	ReaderAF(string);
+
 	ReaderAF(const ReaderAF& other)
 		: filePath{other.filePath},
 		  currentState{other.currentState},
@@ -21,26 +24,36 @@ public:
 		  cntStatesAll{other.cntStatesAll},
 		  cntSymb{other.cntSymb},
 		  cntStatesFinal{other.cntStatesFinal},
+		  cntPaths{other.cntPaths},
 		  statesAll{other.statesAll},
 		  statesFinal{other.statesFinal},
 		  symbols{other.symbols},
 		  pathsMatrix{other.pathsMatrix},
 		  statesInfo{other.statesInfo.accesible, 
-					 other.statesInfo.inaccesible,
-					 other.statesInfo.finalized,
-					 other.statesInfo.unfinalized},
+					other.statesInfo.inaccesible, 
+					other.statesInfo.finalized, 
+					other.statesInfo.unfinalized},
 		  indexCurrentState{other.indexCurrentState}
 	{
+		confFile.open(filePath, ios::in);
 	}
 
-	ReaderAF operator=(const ReaderAF other) const
+	ReaderAF operator=(ReaderAF other)
 	{
 		return ReaderAF(other);
 	}
 
-	explicit ReaderAF(string);
+	ReaderAF(): cntStatesAll(0), cntSymb(0), cntStatesFinal(0), cntPaths(0), indexCurrentState(0)
+	{ }
 	~ReaderAF();
-	
+
+	friend bool operator==(const ReaderAF& lhs, const ReaderAF& rhs);
+
+	friend bool operator!=(const ReaderAF& lhs, const ReaderAF& rhs)
+	{
+		return !(lhs == rhs);
+	}
+
 	int readConfig();
 	string minimizeAFD();
 	void removeUselessStates();
@@ -48,8 +61,6 @@ public:
 	int indexOfSymb(string) const;
 	int indexOfState(string) const;
 	int indexOfStateFinal(string) const;
-	static bool isIn(string, vector<string>);
-	static bool isIn(int, vector<int>);
 	static bool isEmpty(vector<string>);
 	void showPathsMatrix() const;
 	int validateWord(string);
@@ -59,6 +70,7 @@ public:
 	void updateFinalized();
 	void updateUnfinalized();
 	void analyzeStates();
+	map<int, char> getLabeledStated() const;
 
 	string filePath;
 	string currentState;
@@ -66,13 +78,12 @@ public:
 	int cntStatesAll;
 	int cntSymb;
 	int cntStatesFinal;
+	int cntPaths;
+	unsigned int nrOfPaths();
 	vector<string> statesAll;
 	vector<string> statesFinal;
 	vector<string> symbols;
 	vector<vector<string>> pathsMatrix;
-	vector<string> &split(const string &s, char delim, vector<string> &elems) const;
-	vector<string> split(const string &s, char delim) const;
-	static vector<string> arraysMinus(const vector<string>, const vector<string>);
 	struct infoStruct
 	{
 		vector<string> accesible;
