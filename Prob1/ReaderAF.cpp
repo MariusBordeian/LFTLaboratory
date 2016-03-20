@@ -618,14 +618,14 @@ string ReaderAF::minimizeAFD() const
 		classes[i] = -1; //neclasificat
 	}
 	int nrClase = -1;
-	vector<string> reprezentantClasa;
+	vector<int> reprezentantClasa;
 	vector<int> newFinalStates;
 	for (i = 0;i < cardQ; i++)
 	{
 		if (classes[i] == -1) //starea qi nu a fost inclusa inca in nici o clasa
 		{
 			classes[i] = ++nrClase;
-			reprezentantClasa.push_back(statesAll[i]);
+			reprezentantClasa.push_back(i);
 			if (isIn(statesAll[i], statesFinal) && !isIn(nrClase, newFinalStates))
 				newFinalStates.push_back(nrClase);
 			for (j = i + 1;j < cardQ ;j++)
@@ -634,14 +634,12 @@ string ReaderAF::minimizeAFD() const
 		}
 	}
 
-	int newCardQ = ++nrClase;
-
 	vector<int> newStates;
-	for (int k = 0; k < nrClase; k++)
+	for (int k = 0; k <= nrClase; k++)
 	{
 		newStates.push_back(k);
 	}
-
+	int newCardQ = newStates.size();
 	// M'=(Q', 6, 7', q0', F')
 
 	vector<DeltaPairs2> delta;
@@ -649,7 +647,11 @@ string ReaderAF::minimizeAFD() const
 	{
 		for (j = 0; j < symbols.size(); ++j)
 		{
-			delta.push_back(DeltaPairs2{ k, symbols[j], classes[indexOfState(pathsMatrix[indexOfState(reprezentantClasa[k])][j])] });
+			auto localIndex = indexOfState(pathsMatrix[reprezentantClasa[k]][j]);
+			if (localIndex > -1) 
+			{
+				delta.push_back(DeltaPairs2{ k, symbols[j], classes[localIndex] });
+			}			
 		}
 	}
 
