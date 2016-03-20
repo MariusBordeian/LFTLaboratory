@@ -5,6 +5,12 @@
 
 using namespace std;
 
+typedef struct triplete2 {
+	int qx;
+	string a;
+	int qy;
+} DeltaPairs2;
+
 class ReaderAF
 {
 public:
@@ -12,13 +18,20 @@ public:
 	~ReaderAF();
 	
 	int readConfig();
+	string minimizeAFD() const;
 	void generateGrammar();
 	int indexOfSymb(string) const;
 	int indexOfState(string) const;
 	int indexOfStateFinal(string) const;
+	static bool isIn(string, vector<string>);
+	static bool isIn(int, vector<int>);
 	void showPathsMatrix() const;
 	int validateWord(string);
 	void showPath(string, string);
+	void updateAccesible();
+	void updateInaccesible();
+	void updateFinalized();
+	void updateUnfinalized();
 	void analyzeStates();
 
 	string filePath;
@@ -33,6 +46,7 @@ public:
 	vector<vector<string>> pathsMatrix;
 	vector<string> &split(const string &s, char delim, vector<string> &elems) const;
 	vector<string> split(const string &s, char delim) const;
+	static vector<string> arraysMinus(const vector<string>, const vector<string>);
 	struct infoStruct
 	{
 		vector<string> accesible;
@@ -44,7 +58,6 @@ public:
 private:
 	string getNextState(string);
 	
-
 	int indexCurrentState;
 	fstream confFile;
 

@@ -70,6 +70,20 @@ vector<string> ReaderAF::split(const string &s, char delim) const
 	return elems;
 }
 
+vector<string> ReaderAF::arraysMinus(const vector<string> fromArray, const vector<string> whatArray)
+{
+	vector<string> result;
+	for (unsigned int it = 0; it < fromArray.size(); ++it)
+	{
+		if (!isIn(fromArray[it], whatArray))
+		{
+			result.push_back(fromArray[it]);
+		}
+	}
+	
+	return result;
+}
+
 int ReaderAF::indexOfSymb(string c) const
 {
 	int i, f = 0;
@@ -110,6 +124,26 @@ int ReaderAF::indexOfStateFinal(string c) const
 		}
 	}
 	return (f == 0) ? -1 : i;
+}
+
+bool ReaderAF::isIn(string a, vector<string> v)
+{
+	for (unsigned int i = 0; i < v.size(); ++i)
+	{
+		if (v[i].compare(a) == 0)
+			return true;
+	}
+	return false;
+}
+
+bool ReaderAF::isIn(int a, vector<int> v)
+{
+	for (unsigned int i = 0; i < v.size(); ++i)
+	{
+		if (v[i] == a)
+			return true;
+	}
+	return false;
 }
 
 void ReaderAF::showPathsMatrix() const
@@ -212,38 +246,67 @@ void ReaderAF::showPath(string w, string startState)
 	indexCurrentState = indexOfState(currentState);
 }
 
-void ReaderAF::analyzeStates()
+void ReaderAF::updateAccesible()
 {
+	vector<int> mystack;
+	vector<bool> mycheck;
+	mycheck.resize(cntStatesAll);
+	auto initialStateIndex = indexOfState(initialState);
 	statesInfo.accesible.clear();
 	statesInfo.accesible.resize(cntStatesAll);
 	for (auto i = 0; i < cntStatesAll; i++)
-		statesInfo.accesible[i] = "-";
+	{
+		if (i != initialStateIndex)
+		{
+			statesInfo.accesible[i] = "-";
+			mycheck[i] = false;
+		}
+		else
+		{
+			statesInfo.accesible[i] = initialState;
+			mycheck[i] = true;
+		}
+	}
+	
+	for (auto it = pathsMatrix[initialStateIndex].begin(); it != pathsMatrix[initialStateIndex].end(); ++it)
+	{
+		auto auxIndex = indexOfState(*it);
+		if (auxIndex > -1) 
+		{
+			mystack.push_back(auxIndex);
+		}
+	}
+
+	auto i = mystack.begin();
+	while ( i != mystack.end() )
+	{
+		auto localIndex = *i;
+		mystack.erase(i);
+		mycheck[localIndex] = true;
+		
+		statesInfo.accesible[localIndex] = statesAll[localIndex];
+		
+		for (auto j = pathsMatrix[localIndex].begin(); j != pathsMatrix[localIndex].end(); ++j)
+		{
+			auto auxIndex = indexOfState(*j);
+			if (auxIndex > -1 && !mycheck[auxIndex])
+			{
+				mystack.push_back(auxIndex);				
+			}
+		}
+		i = mystack.begin();
+	}
+}
+
+void ReaderAF::updateInaccesible()
+{
+	if (statesInfo.accesible.size() == 0)
+		updateAccesible();
 
 	statesInfo.inaccesible.clear();
 	statesInfo.inaccesible.resize(cntStatesAll);
 	for (auto i = 0; i < cntStatesAll; i++)
 		statesInfo.inaccesible[i] = "-";
-
-	statesInfo.finalized.clear();
-	statesInfo.finalized.resize(cntStatesAll);
-	for (auto i = 0; i < cntStatesAll; i++)
-		statesInfo.finalized[i] = "-";
-
-	statesInfo.unfinalized.clear();
-	statesInfo.unfinalized.resize(cntStatesAll);
-	for (auto i = 0; i < cntStatesAll; i++)
-		statesInfo.unfinalized[i] = "-";
-
-
-	for (auto i = 0; i < cntStatesAll; i++)
-	{
-		for (auto j = 0; j < cntSymb; j++)
-		{
-			auto index = indexOfState(pathsMatrix[i][j]);
-			if (index > -1)
-				statesInfo.accesible[index] = pathsMatrix[i][j];
-		}
-	}
 
 	for (auto i = 0; i < cntStatesAll; i++)
 	{
@@ -252,14 +315,78 @@ void ReaderAF::analyzeStates()
 			statesInfo.inaccesible[i] = statesAll[i];
 		}
 	}
+}
+
+void ReaderAF::updateFinalized()
+{
+	if (statesInfo.unfinalized.size() == 0)
+		updateAccesible();
+
+	statesInfo.finalized.clear();
+	statesInfo.finalized.resize(cntStatesAll);
+	for (auto i = 0; i < cntStatesAll; i++)
+	{
+		if (isIn(statesAll[i], statesInfo.accesible) &&
+			indexOfStateFinal(statesAll[i]) > -1)
+		{
+			statesInfo.finalized[i] = statesAll[i];
+		}
+		else
+		{
+			statesInfo.finalized[i] = "-";
+		}
+	}
+	
+
+	/* // not sure of this solution
+	auto symCheck = 0;
+	for (auto i = 0; i < cntStatesAll; i++)
+	{
+		for (auto j = 0; j < cntSymb; j++)
+		{
+			if (isIn(pathsMatrix[i][j], statesInfo.accesible))
+			{
+				if (pathsMatrix[i][j] == "-")
+					symCheck++;
+			}
+			else
+				break;
+		}
+		if ((symCheck == cntSymb) && (indexOfStateFinal(statesAll[i]) > -1))
+		{
+			statesInfo.finalized[i] = statesAll[i];
+			symCheck = 0;
+		}
+		else
+		{
+			symCheck = 0;
+		}
+	}
+	//*/
+}
+
+void ReaderAF::updateUnfinalized()
+{
+	if (statesInfo.inaccesible.size() == 0)
+		updateAccesible();
+
+	statesInfo.unfinalized.clear();
+	statesInfo.unfinalized.resize(cntStatesAll);
+	for (auto i = 0; i < cntStatesAll; i++)
+		statesInfo.unfinalized[i] = "-";
 
 	auto symCheck = 0;
 	for (auto i = 0; i < cntStatesAll; i++)
 	{
 		for (auto j = 0; j < cntSymb; j++)
 		{
-			if (pathsMatrix[i][j] == "-")
-				symCheck++;
+			if (isIn(pathsMatrix[i][j], statesInfo.accesible))
+			{
+				if (pathsMatrix[i][j] == "-")
+					symCheck++;
+			}
+			else
+				break;
 		}
 		if ((symCheck == cntSymb) && (indexOfStateFinal(statesAll[i]) == -1))
 		{
@@ -271,17 +398,16 @@ void ReaderAF::analyzeStates()
 			symCheck = 0;
 		}
 	}
+}
 
-	for (auto i = 0; i < cntStatesAll; i++)
-	{
-		if ((statesInfo.unfinalized[i].compare("-") == 0) && 
-			(indexOfStateFinal(statesAll[i]) == -1))
-		{
-			statesInfo.finalized[i] = statesAll[i];
-		}
-	}
-
-
+void ReaderAF::analyzeStates()
+{
+	// NOTE : order matters!
+	updateAccesible();
+	updateInaccesible();
+	updateUnfinalized();
+	updateFinalized();
+	
 	cout << "\nfor initial state \"" << initialState << "\" following are true";
 
 	cout << "\naccesible states\t: ";
@@ -394,7 +520,7 @@ int ReaderAF::readConfig()
 
 	string ci, cj, cs;
 	int i, j;
-	while (!confFile.eof() && confFile.peek() != '\n')
+	while (!confFile.eof())
 	{
 		confFile >> ci;
 		confFile >> cj;
@@ -414,6 +540,168 @@ int ReaderAF::readConfig()
 	}
 
 	return 0;
+}
+
+string ReaderAF::minimizeAFD() const
+{
+	unsigned int i = 0, j = 0;
+	unsigned int cardQ = statesAll.size();
+	auto** A = new int*[cardQ];
+	for (i = 0; i < cardQ; i++)
+	{
+		A[i] = new int[cardQ];
+	}
+
+	for (i = 0;i < cardQ; i++)
+		for (j = 0; j < cardQ; j++)
+			A[i][j] = 0;
+
+	vector<string> stateAllWithoutFinal = arraysMinus(statesAll, statesFinal);
+
+	for (i = 0; i < cardQ - 1; i++)
+		for (j = i + 1; j < cardQ; j++)
+			if (
+				(isIn(statesAll[i], statesFinal) && isIn(statesAll[j], stateAllWithoutFinal)) || 
+				(isIn(statesAll[i], stateAllWithoutFinal) && isIn(statesAll[j], statesFinal))
+				)
+			{
+				A[i][j] = 1;
+				A[j][i] = 1;
+			}
+
+	bool modif;
+	do {
+		modif = false;
+
+		for (i = 0;i < cardQ - 1; i++)
+		{
+			for (j = i + 1;j < cardQ; j++)
+			{
+				if (A[i][j] == 0)
+				{
+					for (unsigned int a = 0; a < symbols.size(); ++a)
+					{
+						if ((pathsMatrix[i][a].compare("-") != 0 && pathsMatrix[j][a].compare("-") == 0) ||
+							(pathsMatrix[j][a].compare("-") != 0 && pathsMatrix[i][a].compare("-") == 0))
+						{
+							A[i][j] = 1;
+							A[j][i] = 1;
+							modif = true;
+							break;
+						}
+						else
+						{
+							if (pathsMatrix[i][a].compare("-") != 0 && pathsMatrix[j][a].compare("-") != 0)
+							{
+								auto x = indexOfState(pathsMatrix[i][a]);
+								auto y = indexOfState(pathsMatrix[j][a]);
+								if (A[x][y] != 0)
+								{
+									A[i][j] = 1;
+									A[j][i] = 1;
+									modif = true;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}		
+	} while (modif);
+	
+	//interpretarea claselor de echivalenta
+	vector<int> classes;
+	classes.resize(cardQ);
+	for (i = 0; i < cardQ; i++)
+	{
+		classes[i] = -1; //neclasificat
+	}
+	int nrClase = -1;
+	vector<string> reprezentantClasa;
+	vector<int> newFinalStates;
+	for (i = 0;i < cardQ; i++)
+	{
+		if (classes[i] == -1) //starea qi nu a fost inclusa inca in nici o clasa
+		{
+			classes[i] = ++nrClase;
+			reprezentantClasa.push_back(statesAll[i]);
+			if (isIn(statesAll[i], statesFinal) && !isIn(nrClase, newFinalStates))
+				newFinalStates.push_back(nrClase);
+			for (j = i + 1;j < cardQ ;j++)
+				if (A[i][j] == 0)
+					classes[j] = nrClase;
+		}
+	}
+
+	int newCardQ = ++nrClase;
+
+	vector<int> newStates;
+	for (int k = 0; k < nrClase; k++)
+	{
+		newStates.push_back(k);
+	}
+
+	// M'=(Q', 6, 7', q0', F')
+
+	vector<DeltaPairs2> delta;
+	for (int k = 0; k < newCardQ; k++)
+	{
+		for (j = 0; j < symbols.size(); ++j)
+		{
+			delta.push_back(DeltaPairs2{ k, symbols[j], classes[indexOfState(pathsMatrix[indexOfState(reprezentantClasa[k])][j])] });
+		}
+	}
+
+	int newInitialState = classes[indexOfState(initialState)];
+	
+	string output = "";
+
+	output.append(to_string(newCardQ) + "\n");
+	for (i = 0; i < newStates.size(); i++)
+	{
+		output.append(to_string(newStates[i]) + " ");
+	}
+	output.append("\n");
+	
+	output.append(to_string(cntSymb) + "\n");
+	for (i = 0; i < symbols.size(); i++)
+	{
+		output.append(symbols[i] + " ");
+	}
+	output.append("\n");
+
+	output.append(to_string(newInitialState) + "\n");
+	output.append(to_string(newFinalStates.size()) + "\n");
+	for (i = 0; i < newFinalStates.size(); i++)
+	{
+		output.append(to_string(newFinalStates[i]) + " ");
+	}
+	output.append("\n");
+
+	for (i = 0; i < delta.size(); i++)
+	{
+		output.append(to_string(delta[i].qx) + " " + delta[i].a + " " + to_string(delta[i].qy));
+		if (i < delta.size() - 1)
+			output.append("\n");
+	}
+
+	fstream minAFDFile;
+	auto minAFDPath = filePath + ".minAFD";
+	minAFDFile.open(minAFDPath, ios::out);
+
+	if (minAFDFile.is_open())
+	{
+		minAFDFile << output;
+		minAFDFile.close();
+		cout << "\nCheck out " + minAFDPath << endl;
+	}
+	else
+	{
+		cout << "\nsomething went wrong!\ncounld not create " + minAFDPath << endl;
+	}
+
+	return output;
 }
 
 void ReaderAF::generateGrammar()	// TODO: S -> epsilon => S'(just not to remove S) -> epsilon

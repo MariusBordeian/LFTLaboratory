@@ -32,7 +32,8 @@ int AF(string filePath)
 			3 : check word for L(M)\n\
 			4 : show path for w from initial state\n\
 			5 : show path for w from given state\n\
-			6 : genrate Grammar\n";
+			6 : genrate Grammar\n\
+			7 : minimize AFD\n";
 		cout << "\nselect option : ";
 		cin >> user;
 		cin.clear();
@@ -76,6 +77,9 @@ int AF(string filePath)
 			break;
 		case 6:
 			r.generateGrammar();
+			break;
+		case 7:
+			cout << endl << r.minimizeAFD();
 			break;
 		default:
 			cout << "\nselect a valid option!\n";
