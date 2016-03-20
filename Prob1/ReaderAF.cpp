@@ -146,6 +146,17 @@ bool ReaderAF::isIn(int a, vector<int> v)
 	return false;
 }
 
+bool ReaderAF::isEmpty(vector<string> vec)
+{
+	unsigned int sumchek = 0;
+
+	for (unsigned int i = 0; i < vec.size(); i++)
+		if (vec[i].compare("-") == 0)
+			sumchek++;
+
+	return sumchek == vec.size();
+}
+
 void ReaderAF::showPathsMatrix() const
 {
 	cout << "\nMatrix : \n\t";
@@ -366,7 +377,7 @@ void ReaderAF::updateFinalized()
 }
 
 void ReaderAF::updateUnfinalized()
-{
+{	// accesibil, not final, si dead-end
 	if (statesInfo.inaccesible.size() == 0)
 		updateAccesible();
 
@@ -380,13 +391,16 @@ void ReaderAF::updateUnfinalized()
 	{
 		for (auto j = 0; j < cntSymb; j++)
 		{
-			if (isIn(pathsMatrix[i][j], statesInfo.accesible))
+			if (isIn(statesAll[i], statesInfo.accesible))
 			{
 				if (pathsMatrix[i][j] == "-")
 					symCheck++;
 			}
 			else
+			{
+				symCheck = 0;
 				break;
+			}
 		}
 		if ((symCheck == cntSymb) && (indexOfStateFinal(statesAll[i]) == -1))
 		{
@@ -542,8 +556,10 @@ int ReaderAF::readConfig()
 	return 0;
 }
 
-string ReaderAF::minimizeAFD() const
+string ReaderAF::minimizeAFD()
 {
+	removeUselessStates();
+
 	unsigned int i = 0, j = 0;
 	unsigned int cardQ = statesAll.size();
 	auto** A = new int*[cardQ];
@@ -704,6 +720,48 @@ string ReaderAF::minimizeAFD() const
 	}
 
 	return output;
+}
+
+void ReaderAF::removeUselessStates()
+{
+	updateAccesible();
+	updateInaccesible();
+	updateFinalized();
+	updateUnfinalized();
+
+	if (!isEmpty(statesInfo.inaccesible)) 
+	{
+		vector<vector<string>> paths;
+		vector<string> states;
+		vector<string> finals;
+
+		for (unsigned int i = 0; i < statesInfo.accesible.size(); i++)
+		{
+			auto localIndex = indexOfState(statesInfo.accesible[i]);
+			if (localIndex > -1)
+			{
+				paths.push_back(pathsMatrix[localIndex]);
+				states.push_back(statesInfo.accesible[i]);
+				if (indexOfStateFinal(statesInfo.accesible[i]) > -1)
+					finals.push_back(statesInfo.accesible[i]);
+			}
+		}
+
+		pathsMatrix = paths;
+		statesAll = states;
+		statesFinal = finals;
+
+		cntStatesAll = statesAll.size();
+		cntStatesFinal = statesFinal.size();
+
+		currentState = initialState;
+		indexCurrentState = indexOfState(initialState);
+
+		updateAccesible();
+		updateInaccesible();
+		updateFinalized();
+		updateUnfinalized();
+	}
 }
 
 void ReaderAF::generateGrammar()	// TODO: S -> epsilon => S'(just not to remove S) -> epsilon

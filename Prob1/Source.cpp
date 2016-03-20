@@ -79,11 +79,10 @@ int AF(string filePath)
 			r.generateGrammar();
 			break;
 		case 7:
-			cout << endl << r.minimizeAFD();
-			break;
-		default:
-			cout << "\nselect a valid option!\n";
-			break;
+			ReaderAF r_min(r);
+			r_min.minimizeAFD();
+			r_min.showPathsMatrix();
+			break;		
 		}
 
 	} while (user != 0);
