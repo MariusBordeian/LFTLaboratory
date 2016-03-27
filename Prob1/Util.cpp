@@ -75,3 +75,49 @@ vector<string> arraysMinus(const vector<string> fromArray, const vector<string> 
 
 	return result;
 }
+
+vector<string> arraysIntersection(const vector<string> v1, const vector<string> v2)
+{
+	vector<string> result;
+
+	for (auto it = v1.begin(); it != v1.end(); ++it)
+	{
+		if (isIn(*it, v2) && !isIn(*it, result))
+		{
+			result.push_back(*it);
+		}
+	}
+
+	for (auto it = v2.begin(); it != v2.end(); ++it)
+	{
+		if (!isIn(*it, result) && isIn(*it, v1))
+		{
+			result.push_back(*it);
+		}
+	}
+
+	return result;
+}
+
+vector<string> arraysUnion(const vector<string> v1, const vector<string> v2)
+{
+	vector<string> result;
+
+	for (auto it = v1.begin(); it != v1.end(); ++it)
+	{
+		if (!isIn(*it, result))
+		{
+			result.push_back(*it);
+		}
+	}
+
+	for (auto it = v2.begin(); it != v2.end(); ++it)
+	{
+		if (!isIn(*it, result))
+		{
+			result.push_back(*it);
+		}
+	}
+
+	return result;
+}
