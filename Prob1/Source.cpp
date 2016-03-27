@@ -1,6 +1,7 @@
 #include "ReaderAF.h"
 #include "ReaderST.h"
 #include "RegularExpression.h"
+#include "Grammar.h"
 #include <iostream>
 #include <string>
 
@@ -218,6 +219,62 @@ int RE()
 	return 0;
 }
 
+int GR()
+{
+	char path[256] = "..\\data\\";
+	string filePath_2(path);
+	string filePath(path);
+	string w;
+	cout << "enter a filename from " + filePath + " : ";
+	//cout << filePath << endl;
+	cin >> w;
+	filePath += w;
+	Grammar g(filePath);
+
+	if (g.readConfig() == 1)
+	{
+		cout << "\nsomething went wrong!\n";
+		system("pause");
+		return 1;
+	};
+
+	g.showRules();
+
+	int user;
+	string s;
+	do
+	{
+		user = 2;
+		cout << "\n\n\
+			0 : previous\n\
+			1 : show rules\n\
+			2 : Clean\n";
+		cout << "\nselect option : ";
+		cin >> user;
+		cin.clear();
+		cin.ignore(256, '\n');
+
+		switch (user)
+		{
+		case 0:
+			cout << "\nsee ya!\n";
+			break;
+		case 1:
+			g.showRules();
+			break;
+		case 2:
+			Grammar g2(g);
+			g2.cleanUp();
+			break;
+		}
+
+		filePath_2 = string(path);
+		filePath = string(path);
+	} while (user != 0);
+
+	return 0;
+}
+
 int main()
 {
 	auto result = 0;
@@ -231,7 +288,8 @@ int main()
 			0 : exit\n\
 			1 : A.F.\n\
 			2 : S.T.\n\
-			3 : R.E.\n";
+			3 : R.E.\n\
+			4 : Grammar\n";
 		cout << "\nselect option : ";
 		cin >> user;
 		cin.clear();
@@ -250,6 +308,9 @@ int main()
 			break;
 		case 3:
 			result = RE();
+			break;
+		case 4:
+			result = GR();
 			break;
 		default:
 			cout << "\nselect a valid option!\n";

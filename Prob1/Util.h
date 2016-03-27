@@ -8,6 +8,7 @@ using namespace std;
 
 bool isIn(string a, vector<string> v);
 bool isIn(int a, vector<int> v);
+bool isIn(char a, vector<string> v);
 bool areEqual(vector<string> vector_1, vector<string> vector_2);
 
 vector<string> &split(const string &s, char delim, vector<string> &elems);

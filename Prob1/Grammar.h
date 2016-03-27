@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
-
+#include <queue>
 using namespace std;
 
 
@@ -19,12 +19,10 @@ public:
 		initialNeterm{ other.initialNeterm },
 		cntNetermsAll{ other.cntNetermsAll },
 		cntSymb{ other.cntSymb },
-		cntNetermsFinal{ other.cntNetermsFinal },
 		cntPaths{ other.cntPaths },
 		netermsAll{ other.netermsAll },
-		netermsFinal{ other.netermsFinal },
 		symbols{ other.symbols },
-		pathsMatrix{ other.pathsMatrix },
+		rules{ other.rules },
 		netermsInfo{ other.netermsInfo.accesible,
 		other.netermsInfo.inaccesible,
 		other.netermsInfo.finalized,
@@ -39,7 +37,7 @@ public:
 		return Grammar(other);
 	}
 
-	Grammar() : cntNetermsAll(0), cntSymb(0), cntNetermsFinal(0), cntPaths(0), indexCurrentNeterm(0)
+	Grammar() : cntNetermsAll(0), cntSymb(0), cntPaths(0), indexCurrentNeterm(0)
 	{ }
 	~Grammar();
 
@@ -58,7 +56,11 @@ public:
 	int indexOfNeterm(string) const;
 	int indexOfNetermFinal(string) const;
 	static bool isEmpty(vector<string>);
-	void showPathsMatrix() const;
+	void showRules() const;
+	void cleanUp();
+	vector<string> getContainingNeterms(string);
+	vector<string> getContainingNeterms(vector<string>);
+	vector<string> getTerms(vector<string>);
 	int validateWord(string);
 	void showPath(string, string);
 	void updateAccesible();
@@ -73,13 +75,11 @@ public:
 	string initialNeterm;
 	int cntNetermsAll;
 	int cntSymb;
-	int cntNetermsFinal;
 	int cntPaths;
 	unsigned int nrOfPaths();
 	vector<string> netermsAll;
-	vector<string> netermsFinal;
 	vector<string> symbols;
-	vector<vector<string>> pathsMatrix;
+	map<string,vector<string>> rules;
 	struct infoStruct
 	{
 		vector<string> accesible;

@@ -20,6 +20,16 @@ bool isIn(int a, vector<int> v)
 	return false;
 }
 
+bool isIn(char a, vector<string> v)
+{
+	string character(1, a);
+	for (unsigned int i = 0; i < v.size(); ++i)
+	{
+		if (v[i].compare(character)==0)
+			return true;
+	}
+	return false;
+}
 
 bool areEqual(vector<string> vector_1, vector<string> vector_2)
 {
