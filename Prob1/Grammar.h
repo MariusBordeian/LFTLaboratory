@@ -53,7 +53,7 @@ public:
 	void removeUselessNeterms();
 	void generateGrammar();
 	int indexOfSymb(string) const;
-	vector<vector<string>> getRedundancyInfo(vector<string>,unsigned int);
+	vector<vector<string>> getRedundancyInfo(vector<string>, int);
 	vector<string> getEligibleRulesForReplacing(vector<string>, unsigned int);
 	int indexOfNeterm(string) const;
 	int indexOfNetermFinal(string) const;
@@ -61,9 +61,9 @@ public:
 	void showRules() const;
 	void showRulesType2() const;
 	void cleanUp();
-	vector<string> getContainingNeterms(string);
-	vector<string> getContainingNeterms(vector<string>);
-	vector<string> getTerms(vector<string>);
+	vector<string> getContainingNeterms(string) const;
+	vector<string> getContainingNeterms(vector<string>) const;
+	vector<string> getTerms(vector<string>) const;
 	int validateWord(string);
 	void showPath(string, string);
 	void updateAccesible();

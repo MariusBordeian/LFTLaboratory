@@ -5,7 +5,6 @@
 #include <string>
 #include <fstream>
 #include <vector>
-#include <stack>
 
 using namespace std;
 
@@ -130,59 +129,56 @@ void Grammar::showRulesType2() const
 	}
 	cout << endl;
 }
-void Grammar::removeLeftRedundancy() {
-	map<string, int> priorities;
-	//vector<string> additionaNeterms;
-	for (unsigned int i = 0; i < netermsAll.size(); i++) {
-		priorities.insert(pair<string, int>(netermsAll[i], i));
-	}
 
+void Grammar::removeLeftRedundancy() {
 	for (unsigned int i = 0,n= netermsAll.size(); i < n; i++) {
-		vector<string> rulesOfLocalNeterm = rules.at(netermsAll[i]);
-		vector<vector<string>> redundancyInfo = getRedundancyInfo(rulesOfLocalNeterm, i);
+		vector<string> rulesOfLocalNeterm = rules.at(netermsAll[i]);									// array of rules for A[i]
+		vector<vector<string>> redundancyInfo = getRedundancyInfo(rulesOfLocalNeterm, i);				// returns 2 arrays (alpha and beta)
 		if (redundancyInfo[0].size()>0 && redundancyInfo[1].size()>0) {
 			rules.erase(netermsAll[i]);
-			vector<string> newRule1; // Ai rules
-			vector<string> newRule2; // Ai' rules -> noul neterminal care se creeaza
+			vector<string> newRule1; // A[i] rules -> based on beta
+			vector<string> newRule2; // A[i]' rules -> based on A[i]<alpha>
 
-			newRule1.insert(newRule1.begin(), redundancyInfo[1].begin(), redundancyInfo[1].end());
+			newRule1.insert(newRule1.begin(), redundancyInfo[1].begin(), redundancyInfo[1].end());		// append to empty <A[i], newRule1> array original beta
 			string newNeterm = netermsAll[i];
-			newNeterm.append("'");
+			newNeterm.append("'");																		// creating new ' neterm <- A[i]'
 			for (auto betaRule : redundancyInfo[1]) {
-				newRule1.push_back(betaRule.append(newNeterm));
+				newRule1.push_back(betaRule.append(newNeterm));											// push foreach beta+A[i]'
 			}
-			newRule2.insert(newRule2.begin(), redundancyInfo[0].begin(), redundancyInfo[0].end());
+			newRule2.insert(newRule2.begin(), redundancyInfo[0].begin(), redundancyInfo[0].end());		// append to empty <A[i]', newRule1> array original alpha
 			for (auto alphaRule : redundancyInfo[0]) {
-				newRule2.push_back(alphaRule.append(newNeterm));
+				newRule2.push_back(alphaRule.append(newNeterm));										// push foreach alpha+A[i]'
 			}
-			rules.insert(pair<string, vector<string>>(netermsAll[i], newRule1));
-			rules.insert(pair<string, vector<string>>(newNeterm, newRule2));
+			rules.insert(pair<string, vector<string>>(netermsAll[i], newRule1));						// update rules map
+			rules.insert(pair<string, vector<string>>(newNeterm, newRule2));							// with both A[i] and A[i]'
 		}
 
 		if (i == n - 1) break;
 
-		for (unsigned int j = 0; j <= i; j++) {
-			vector<string> localRules = rules.at(netermsAll[i + 1]);
-			vector<string> eligibleRules = getEligibleRulesForReplacing(localRules, j);
+		for (unsigned int j = 0; j <= i; j++) {															// swap A[j] in rules of A[i+1] => Aj<gamma>
+			vector<string> localRules = rules.at(netermsAll[i + 1]);									// get rules for A[i+1]
+			vector<string> eligibleRules = getEligibleRulesForReplacing(localRules, j);					// get array of "gammas"
 			if (eligibleRules.size() > 0) {
 				vector<string> oldRules = rules.at(netermsAll[i + 1]);
 				vector<string> newRules;
 				for (auto r:oldRules) {
-					if (r[0] != netermsAll[j][0]) {
-						newRules.push_back(r);
+					if (r[0] != netermsAll[j][0]) {														// insert non-eligible rules
+						newRules.push_back(r);															// not to lose original array of rules if ruleOf(A[i+1])[0] != A[j][0]
 					}
 				}
-				rules.erase(netermsAll[i + 1]);
-				vector<string> rulesOfAj = rules.at(netermsAll[j]);
+				rules.erase(netermsAll[i + 1]);															// delete obsolite rule of A[i+i]
+				vector<string> rulesOfAj = rules.at(netermsAll[j]);										// get rules for A[j]
 				for (auto gamma : eligibleRules) {
-					for (auto jrule : rulesOfAj) {
-						newRules.push_back(jrule.append(gamma));
+					for (auto jrule : rulesOfAj) {														// foreach gama get all ruleOf(A[j]) to create jrule+gamma
+						newRules.push_back(jrule.append(gamma));										// push the updated rule
 					}
 				}
-				rules.insert(pair<string,vector<string>>(netermsAll[i+1], newRules));
+				rules.insert(pair<string,vector<string>>(netermsAll[i+1], newRules));					// re-insert the new set of rules for A[i+1]
 			}
  		}
 	}
+
+	// update netermsAll array with newly created neterms based on rules map
 	netermsAll.clear();
 	for (auto r : rules) {
 		netermsAll.push_back(r.first);
@@ -191,10 +187,10 @@ void Grammar::removeLeftRedundancy() {
 }
 
 vector<string> Grammar::getEligibleRulesForReplacing(vector<string> rulesOfLocalNeterm, unsigned int index) {
-	vector<string> results;
+	vector<string> results;							// return all gammas from the rules array passed
 	string gamma = "";
 	for (auto rule : rulesOfLocalNeterm) {
-		if (rule[0] == netermsAll[index][0]) {
+		if (rule[0] == netermsAll[index][0]) {		// ruleOf(A[i+1])[0] == A[j][0]		from { A[i+1] => A[j]<gamma> } rule
 			gamma = rule.substr(1, rule.size());
 			results.push_back(gamma);
 		}
@@ -202,15 +198,18 @@ vector<string> Grammar::getEligibleRulesForReplacing(vector<string> rulesOfLocal
 	return results;
 }
 
-vector<vector<string>> Grammar::getRedundancyInfo(vector<string> rulesOfLocalNeterm,unsigned int index) {
-	vector<string> alpha;
-	vector<string> beta;
-	vector<vector<string>> combined;
-	for (int i = 0; i < rulesOfLocalNeterm.size(); i++) {
-		if (rulesOfLocalNeterm[i][0] == netermsAll[index][0]) {
+vector<vector<string>> Grammar::getRedundancyInfo(vector<string> rulesOfLocalNeterm, int index) {
+	vector<string> alpha;									// alphas for newly created A[i]'
+	vector<string> beta;									// betas for updated A[i]
+	vector<vector<string>> combined;						// alphas and betas from { A[i] => A[i]<alpha>|...|<beta> }
+	for (unsigned int i = 0; i < rulesOfLocalNeterm.size(); i++) {
+		if (rulesOfLocalNeterm[i][0] == netermsAll[index][0]) 
+		{
 			alpha.push_back(rulesOfLocalNeterm[i].substr(1, rulesOfLocalNeterm[i].size()));
 		}
-		else if (indexOfNeterm(to_string(rulesOfLocalNeterm[i][0]))==-1 || indexOfNeterm(to_string(rulesOfLocalNeterm[i][0])) > index)  {
+		else if (indexOfNeterm(to_string(rulesOfLocalNeterm[i][0]))==-1 
+			|| indexOfNeterm(to_string(rulesOfLocalNeterm[i][0])) > index)  
+		{
 			beta.push_back(rulesOfLocalNeterm[i]);
 		}
 	}
@@ -329,13 +328,13 @@ void Grammar::cleanUp() {
 
 		grammarFile << endl << initialNeterm << endl;
 
-		auto i = 0, j = 0;
+		auto i1 = 0, j = 0;
 		for (auto rule : rules) {
-			i++;
+			i1++;
 			for (auto v : rule.second) {
 				j++;
 				grammarFile << rule.first << " " << v;
-				if (!(j == rule.second.size() && i == rules.size())) {
+				if (!(j == rule.second.size() && i1 == rules.size())) {
 					grammarFile << endl;
 				}
 			}
@@ -350,7 +349,9 @@ void Grammar::cleanUp() {
 		cout << "\nError create grammar file!\n";
 	}
 }
-vector<string> Grammar::getContainingNeterms(string in) {
+
+vector<string> Grammar::getContainingNeterms(string in) const
+{
 	vector<string> temp;
 	for (unsigned int i = 0; i < in.length(); i++) {
 		if (isIn(in[i], netermsAll)) {
@@ -362,7 +363,9 @@ vector<string> Grammar::getContainingNeterms(string in) {
 	}
 	return temp;
 }
-vector<string> Grammar::getContainingNeterms(vector<string> in) {
+
+vector<string> Grammar::getContainingNeterms(vector<string> in) const
+{
 	vector<string> temp;
 	for ( auto j:in){
 		for (unsigned int i = 0; i < j.length(); i++) {
@@ -375,7 +378,9 @@ vector<string> Grammar::getContainingNeterms(vector<string> in) {
 	}
 	return temp;
 }
-vector<string> Grammar::getTerms(vector<string> in) {
+
+vector<string> Grammar::getTerms(vector<string> in) const
+{
 	vector<string> temp;
 	for (auto j : in) {
 		for (unsigned int i = 0; i < j.length(); i++) {
