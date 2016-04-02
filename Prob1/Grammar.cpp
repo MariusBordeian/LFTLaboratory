@@ -114,6 +114,111 @@ void Grammar::showRules() const
 	}
 	cout << endl;
 }
+
+void Grammar::showRulesType2() const
+{
+	int counter = 0;
+	cout << "\nRules : \n";
+	for (auto values : rules) {
+		cout << values.first << "\t";
+		counter = 0;
+		for (auto element : values.second) {
+			cout << element << ((counter!=values.second.size()-1)?"\t| ":"");
+			counter++;
+		}
+		cout << endl;
+	}
+	cout << endl;
+}
+void Grammar::removeLeftRedundancy() {
+	map<string, int> priorities;
+	//vector<string> additionaNeterms;
+	for (unsigned int i = 0; i < netermsAll.size(); i++) {
+		priorities.insert(pair<string, int>(netermsAll[i], i));
+	}
+
+	for (unsigned int i = 0,n= netermsAll.size(); i < n; i++) {
+		vector<string> rulesOfLocalNeterm = rules.at(netermsAll[i]);
+		vector<vector<string>> redundancyInfo = getRedundancyInfo(rulesOfLocalNeterm, i);
+		if (redundancyInfo[0].size()>0 && redundancyInfo[1].size()>0) {
+			rules.erase(netermsAll[i]);
+			vector<string> newRule1; // Ai rules
+			vector<string> newRule2; // Ai' rules -> noul neterminal care se creeaza
+
+			newRule1.insert(newRule1.begin(), redundancyInfo[1].begin(), redundancyInfo[1].end());
+			string newNeterm = netermsAll[i];
+			newNeterm.append("'");
+			for (auto betaRule : redundancyInfo[1]) {
+				newRule1.push_back(betaRule.append(newNeterm));
+			}
+			newRule2.insert(newRule2.begin(), redundancyInfo[0].begin(), redundancyInfo[0].end());
+			for (auto alphaRule : redundancyInfo[0]) {
+				newRule2.push_back(alphaRule.append(newNeterm));
+			}
+			rules.insert(pair<string, vector<string>>(netermsAll[i], newRule1));
+			rules.insert(pair<string, vector<string>>(newNeterm, newRule2));
+		}
+
+		if (i == n - 1) break;
+
+		for (unsigned int j = 0; j <= i; j++) {
+			vector<string> localRules = rules.at(netermsAll[i + 1]);
+			vector<string> eligibleRules = getEligibleRulesForReplacing(localRules, j);
+			if (eligibleRules.size() > 0) {
+				vector<string> oldRules = rules.at(netermsAll[i + 1]);
+				vector<string> newRules;
+				for (auto r:oldRules) {
+					if (r[0] != netermsAll[j][0]) {
+						newRules.push_back(r);
+					}
+				}
+				rules.erase(netermsAll[i + 1]);
+				vector<string> rulesOfAj = rules.at(netermsAll[j]);
+				for (auto gamma : eligibleRules) {
+					for (auto jrule : rulesOfAj) {
+						newRules.push_back(jrule.append(gamma));
+					}
+				}
+				rules.insert(pair<string,vector<string>>(netermsAll[i+1], newRules));
+			}
+ 		}
+	}
+	netermsAll.clear();
+	for (auto r : rules) {
+		netermsAll.push_back(r.first);
+	}
+	cntNetermsAll = netermsAll.size();
+}
+
+vector<string> Grammar::getEligibleRulesForReplacing(vector<string> rulesOfLocalNeterm, unsigned int index) {
+	vector<string> results;
+	string gamma = "";
+	for (auto rule : rulesOfLocalNeterm) {
+		if (rule[0] == netermsAll[index][0]) {
+			gamma = rule.substr(1, rule.size());
+			results.push_back(gamma);
+		}
+	}
+	return results;
+}
+
+vector<vector<string>> Grammar::getRedundancyInfo(vector<string> rulesOfLocalNeterm,unsigned int index) {
+	vector<string> alpha;
+	vector<string> beta;
+	vector<vector<string>> combined;
+	for (int i = 0; i < rulesOfLocalNeterm.size(); i++) {
+		if (rulesOfLocalNeterm[i][0] == netermsAll[index][0]) {
+			alpha.push_back(rulesOfLocalNeterm[i].substr(1, rulesOfLocalNeterm[i].size()));
+		}
+		else if (indexOfNeterm(to_string(rulesOfLocalNeterm[i][0]))==-1 || indexOfNeterm(to_string(rulesOfLocalNeterm[i][0])) > index)  {
+			beta.push_back(rulesOfLocalNeterm[i]);
+		}
+	}
+	combined.push_back(alpha);
+	combined.push_back(beta);
+	return combined;
+}
+
 void Grammar::cleanUp() {
 	vector<string> N1;
 	bool change = false;

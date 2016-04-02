@@ -53,10 +53,13 @@ public:
 	void removeUselessNeterms();
 	void generateGrammar();
 	int indexOfSymb(string) const;
+	vector<vector<string>> getRedundancyInfo(vector<string>,unsigned int);
+	vector<string> getEligibleRulesForReplacing(vector<string>, unsigned int);
 	int indexOfNeterm(string) const;
 	int indexOfNetermFinal(string) const;
 	static bool isEmpty(vector<string>);
 	void showRules() const;
+	void showRulesType2() const;
 	void cleanUp();
 	vector<string> getContainingNeterms(string);
 	vector<string> getContainingNeterms(vector<string>);
@@ -68,6 +71,7 @@ public:
 	void updateFinalized();
 	void updateUnfinalized();
 	void analyzeNeterms();
+	void removeLeftRedundancy();
 	map<int, char> getLabeledNetermd() const;
 
 	string filePath;

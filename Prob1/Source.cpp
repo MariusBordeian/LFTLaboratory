@@ -248,7 +248,8 @@ int GR()
 		cout << "\n\n\
 			0 : previous\n\
 			1 : show rules\n\
-			2 : Clean\n";
+			2 : Clean\n\
+			3 : Remove left redundancy\n";
 		cout << "\nselect option : ";
 		cin >> user;
 		cin.clear();
@@ -262,9 +263,17 @@ int GR()
 		case 1:
 			g.showRules();
 			break;
-		case 2:
-			Grammar g2(g);
-			g2.cleanUp();
+		case 2:{
+				Grammar g2(g);
+				g2.cleanUp();
+			}
+			break;
+		case 3:
+		{
+			Grammar g3(g);
+			g3.removeLeftRedundancy();
+			g3.showRulesType2();
+		}
 			break;
 		}
 
