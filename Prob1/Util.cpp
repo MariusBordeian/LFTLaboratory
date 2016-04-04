@@ -1,15 +1,5 @@
 #include "Util.h"
 
-bool isIn(string a, vector<string> v)
-{
-	for (unsigned int i = 0; i < v.size(); ++i)
-	{
-		if (v[i].compare(a) == 0)
-			return true;
-	}
-	return false;
-}
-
 bool isIn(int a, vector<int> v)
 {
 	for (unsigned int i = 0; i < v.size(); ++i)
@@ -26,6 +16,46 @@ bool isIn(char a, vector<string> v)
 	for (unsigned int i = 0; i < v.size(); ++i)
 	{
 		if (v[i].compare(character)==0)
+			return true;
+	}
+	return false;
+}
+
+bool isIn(string a, vector<string> v)
+{
+	for (unsigned int i = 0; i < v.size(); ++i)
+	{
+		if (v[i].compare(a) == 0)
+			return true;
+	}
+	return false;
+}
+
+bool isIn(string a, vector<tuple<string, int, int>> v)
+{
+	for (unsigned int i = 0; i < v.size(); ++i)
+	{
+		if (a.compare(get<0>(v[i])) == 0)
+			return true;
+	}
+	return false;
+}
+
+bool isIn(tuple<string, int, int> t, vector<tuple<string, int, int>> v)
+{
+	string t_a = get<0>(t);
+	int t_b = get<1>(t);
+	int t_c = get<2>(t);
+
+	for (unsigned int i = 0; i < v.size(); ++i)
+	{
+		string v_a = get<0>(v[i]);
+		int v_b = get<1>(v[i]);
+		int v_c = get<2>(v[i]);
+
+		if (v_a.compare(t_a) == 0
+			&& v_b == t_b
+			&& v_c == t_c)
 			return true;
 	}
 	return false;

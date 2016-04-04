@@ -2,13 +2,16 @@
 
 #include <string>
 #include <vector>
+#include <tuple>
 #include <sstream>
 
 using namespace std;
 
-bool isIn(string a, vector<string> v);
 bool isIn(int a, vector<int> v);
 bool isIn(char a, vector<string> v);
+bool isIn(string a, vector<string> v);
+bool isIn(string a, vector<tuple<string, int, int>> v);
+bool isIn(tuple<string, int, int> t, vector<tuple<string, int, int>> v);
 bool areEqual(vector<string> vector_1, vector<string> vector_2);
 
 vector<string> &split(const string &s, char delim, vector<string> &elems);

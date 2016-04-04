@@ -5,6 +5,8 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <tuple>
+#include <queue>
 
 using namespace std;
 
@@ -130,10 +132,10 @@ void Grammar::showRulesType2() const
 	cout << endl;
 }
 
-void Grammar::removeLeftRedundancy() {
+void Grammar::removeLeftRecursion() {
 	for (unsigned int i = 0,n= netermsAll.size(); i < n; i++) {
 		vector<string> rulesOfLocalNeterm = rules.at(netermsAll[i]);									// array of rules for A[i]
-		vector<vector<string>> redundancyInfo = getRedundancyInfo(rulesOfLocalNeterm, i);				// returns 2 arrays (alpha and beta)
+		vector<vector<string>> redundancyInfo = getRecursionInfo(rulesOfLocalNeterm, i);				// returns 2 arrays (alpha and beta)
 		if (redundancyInfo[0].size()>0 && redundancyInfo[1].size()>0) {
 			rules.erase(netermsAll[i]);
 			vector<string> newRule1; // A[i] rules -> based on beta
@@ -198,7 +200,7 @@ vector<string> Grammar::getEligibleRulesForReplacing(vector<string> rulesOfLocal
 	return results;
 }
 
-vector<vector<string>> Grammar::getRedundancyInfo(vector<string> rulesOfLocalNeterm, int index) {
+vector<vector<string>> Grammar::getRecursionInfo(vector<string> rulesOfLocalNeterm, int index) {
 	vector<string> alpha;									// alphas for newly created A[i]'
 	vector<string> beta;									// betas for updated A[i]
 	vector<vector<string>> combined;						// alphas and betas from { A[i] => A[i]<alpha>|...|<beta> }
@@ -393,6 +395,125 @@ vector<string> Grammar::getTerms(vector<string> in) const
 	}
 	return temp;
 }
+
+vector<tuple<string, int, int>> Grammar::getKeysContainingValue(string val) const
+{
+	vector<tuple<string, int, int>> keys;
+	auto k = 0;
+	for (auto rule : rules)
+	{
+		for (unsigned int r = 0; r < rule.second.size(); ++r)
+		{
+			if (rule.second[r].compare(val) == 0)
+			{
+				keys.push_back(tuple<string, int, int>(rule.first, r, k));		// only r, k will be set on return after call
+			}
+		}
+	}
+
+	return keys;
+}
+
+bool Grammar::checkWordForGrammar(string word)
+{
+	auto n = word.size() + 1;
+	V.resize(n);
+	for (unsigned int i = 0; i < n; i++)
+	{
+		V[i].resize(n);
+
+		if (i > 0)
+		{
+			V[i][1] = getKeysContainingValue(word.substr(i - 1, 1));
+
+			for (unsigned int t = 0; t < V[i][1].size(); t++)
+			{
+				V[i][1][t] = tuple<string, int, int>(get<0>(V[i][1][t]), get<1>(V[i][1][t]), 1);
+			}
+		}
+	}
+
+	for (unsigned int j = 2; j < n; j++)
+	{
+		for (unsigned int i = 1; i < n - j + 1; i++)
+		{
+			for (unsigned int k = 1; k <= j - 1; k++)
+			{
+				vector<tuple<string, int, int>> B = V[i][k];
+				vector<tuple<string, int, int>> C = V[i+k][j-k];
+
+				for (auto b : B)
+				{
+					for (auto c : C)
+					{
+						string combined = get<0>(b);
+						combined.append(get<0>(c));
+						auto tempVec = getKeysContainingValue(combined);
+						
+						for (unsigned int t = 0; t < tempVec.size(); t++)
+						{
+							tempVec[t] = tuple<string, int, int>(get<0>(tempVec[t]), get<1>(tempVec[t]), k);
+						}
+
+						for (auto aux : tempVec)
+						{
+							if (!isIn(get<0>(aux), V[i][j]))
+							{
+								V[i][j].push_back(aux);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	cout << "\nparsing : \n";
+	parse("S", 1, n - 1);
+
+	return V[1][n-1].size() > 0 && isIn("S", V[1][n - 1]);
+}
+
+void Grammar::parse(string neterm, int i, int j) const
+{
+	auto v_t = V[i][j];
+	tuple<string, int, int> local;
+
+	for (auto t : v_t)
+	{
+		if (neterm.compare(get<0>(t)) == 0)
+		{
+			local = t;
+		}
+	}
+
+	string rule = rules.at(get<0>(local))[get<1>(local)];
+
+	int k = get<2>(local);
+
+	if (j == 1)
+	{
+		for (auto p = 0; p <= i; p++)
+			cout << "\t";
+
+		cout << get<0>(local) << " -> " << rule << "\n";
+
+		return;
+	}
+	else
+	{
+		for (auto p = 0; p < i; p++)
+			cout << "\t";
+
+		cout << get<0>(local) << " -> " << rule << "\n";
+
+		parse(rule.substr(0, 1), i, k);
+		parse(rule.substr(1, 1), i + k, j - k);
+
+		return;
+	}
+}
+
 /*
 int Grammar::validateWord(string w)
 {

@@ -249,7 +249,8 @@ int GR()
 			0 : previous\n\
 			1 : show rules\n\
 			2 : Clean\n\
-			3 : Remove left redundancy\n";
+			3 : Remove left redundancy\n\
+			4 : check word for this grammar.\t eg.: baaba\n";
 		cout << "\nselect option : ";
 		cin >> user;
 		cin.clear();
@@ -263,18 +264,21 @@ int GR()
 		case 1:
 			g.showRules();
 			break;
-		case 2:{
+		case 2: {
 				Grammar g2(g);
 				g2.cleanUp();
-			}
-			break;
-		case 3:
-		{
-			Grammar g3(g);
-			g3.removeLeftRedundancy();
-			g3.showRulesType2();
-		}
-			break;
+			} break;
+		case 3: {
+				Grammar g3(g);
+				g3.removeLeftRecursion();
+				g3.showRulesType2();
+			} break;
+		case 4: {
+				string word;
+				cout << "\nEnter word to check : ";
+				cin >> word;
+				cout << endl << (g.checkWordForGrammar(word) ? word + " poate fi generat de catre gramatica" : word + " NU poate fi generat de catre gramatica") << endl;
+			} break;
 		}
 
 		filePath_2 = string(path);

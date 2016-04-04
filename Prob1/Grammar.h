@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
-#include <queue>
+
 using namespace std;
 
 
@@ -53,7 +53,7 @@ public:
 	void removeUselessNeterms();
 	void generateGrammar();
 	int indexOfSymb(string) const;
-	vector<vector<string>> getRedundancyInfo(vector<string>, int);
+	vector<vector<string>> getRecursionInfo(vector<string>, int);
 	vector<string> getEligibleRulesForReplacing(vector<string>, unsigned int);
 	int indexOfNeterm(string) const;
 	int indexOfNetermFinal(string) const;
@@ -64,6 +64,8 @@ public:
 	vector<string> getContainingNeterms(string) const;
 	vector<string> getContainingNeterms(vector<string>) const;
 	vector<string> getTerms(vector<string>) const;
+	vector<tuple<string, int, int>> getKeysContainingValue(string) const;
+	bool checkWordForGrammar(string word);
 	int validateWord(string);
 	void showPath(string, string);
 	void updateAccesible();
@@ -71,7 +73,8 @@ public:
 	void updateFinalized();
 	void updateUnfinalized();
 	void analyzeNeterms();
-	void removeLeftRedundancy();
+	void removeLeftRecursion();
+	void parse(string, int, int) const;
 	map<int, char> getLabeledNetermd() const;
 
 	string filePath;
@@ -84,6 +87,8 @@ public:
 	vector<string> netermsAll;
 	vector<string> symbols;
 	map<string,vector<string>> rules;
+	vector<vector<vector<tuple<string, int, int>>>> V;		// CYK
+
 	struct infoStruct
 	{
 		vector<string> accesible;
