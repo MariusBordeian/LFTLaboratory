@@ -74,7 +74,7 @@ public:
 	void updateUnfinalized();
 	void analyzeNeterms();
 	void removeLeftRecursion();
-	void parse(string, int, int) const;
+	void parse(string, int, int);
 	map<int, char> getLabeledNetermd() const;
 
 	string filePath;
@@ -103,4 +103,5 @@ private:
 	int indexCurrentNeterm;
 	fstream confFile;
 
+	unsigned int parse_stack_calls = 0;
 };

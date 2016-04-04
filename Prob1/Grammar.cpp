@@ -428,7 +428,7 @@ bool Grammar::checkWordForGrammar(string word)
 
 			for (unsigned int t = 0; t < V[i][1].size(); t++)
 			{
-				V[i][1][t] = tuple<string, int, int>(get<0>(V[i][1][t]), get<1>(V[i][1][t]), 1);
+				V[i][1][t] = tuple<string, int, int>(get<0>(V[i][1][t]), get<1>(V[i][1][t]), 1);	// k = 1 for j == 1;
 			}
 		}
 	}
@@ -452,7 +452,7 @@ bool Grammar::checkWordForGrammar(string word)
 						
 						for (unsigned int t = 0; t < tempVec.size(); t++)
 						{
-							tempVec[t] = tuple<string, int, int>(get<0>(tempVec[t]), get<1>(tempVec[t]), k);
+							tempVec[t] = tuple<string, int, int>(get<0>(tempVec[t]), get<1>(tempVec[t]), k);	// <neterm, r, k> used in parse(neterm, i, j);
 						}
 
 						for (auto aux : tempVec)
@@ -469,12 +469,13 @@ bool Grammar::checkWordForGrammar(string word)
 	}
 	
 	cout << "\nparsing : \n";
+	parse_stack_calls = 0;
 	parse("S", 1, n - 1);
 
 	return V[1][n-1].size() > 0 && isIn("S", V[1][n - 1]);
 }
 
-void Grammar::parse(string neterm, int i, int j) const
+void Grammar::parse(string neterm, int i, int j)
 {
 	auto v_t = V[i][j];
 	tuple<string, int, int> local;
@@ -491,22 +492,18 @@ void Grammar::parse(string neterm, int i, int j) const
 
 	int k = get<2>(local);
 
+	for (unsigned p = 0; p <= parse_stack_calls; p++) {
+		cout << "\t";
+	}
+	cout << "(" << get<0>(local) << ", " << i << ", " << j << ") -> " << rule << "\n";
+
 	if (j == 1)
 	{
-		for (auto p = 0; p <= i; p++)
-			cout << "\t";
-
-		cout << get<0>(local) << " -> " << rule << "\n";
-
 		return;
 	}
 	else
 	{
-		for (auto p = 0; p < i; p++)
-			cout << "\t";
-
-		cout << get<0>(local) << " -> " << rule << "\n";
-
+		parse_stack_calls++;
 		parse(rule.substr(0, 1), i, k);
 		parse(rule.substr(1, 1), i + k, j - k);
 
