@@ -468,9 +468,11 @@ bool Grammar::checkWordForGrammar(string word)
 		}
 	}
 	
-	cout << "\nparsing : \n";
-	parse_stack_calls = 0;
-	parse("S", 1, n - 1);
+	if (V[1][n - 1].size() > 0 && isIn("S", V[1][n - 1])) {
+		cout << "\nparsing : \n";
+		parse_stack_calls = 0;
+		parse("S", 1, n - 1);
+	}
 
 	return V[1][n-1].size() > 0 && isIn("S", V[1][n - 1]);
 }
