@@ -612,24 +612,14 @@ bool Grammar::checkWordForGrammar(string word)
 			}
 		}
 	}
-<<<<<<< HEAD
 	bool output = false;
-=======
-	
->>>>>>> 48540f076f0e9b30fdb326d0a95007be9751b1af
 	if (V[1][n - 1].size() > 0 && isIn("S", V[1][n - 1])) {
 		cout << "\nparsing : \n";
 		parse_stack_calls = 0;
 		parse("S", 1, n - 1);
-<<<<<<< HEAD
 		output = true;
 	}
 	return output;
-=======
-	}
-
-	return V[1][n-1].size() > 0 && isIn("S", V[1][n - 1]);
->>>>>>> 48540f076f0e9b30fdb326d0a95007be9751b1af
 }
 
 void Grammar::parse(string neterm, int i, int j)

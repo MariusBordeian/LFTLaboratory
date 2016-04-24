@@ -1,100 +1,13 @@
 ﻿  Util.cpp
+c:\program files (x86)\microsoft visual studio 14.0\vc\include\crtdefs.h(10): fatal error C1083: Cannot open include file: 'corecrt.h': No such file or directory
+  Source.cpp
+c:\program files (x86)\microsoft visual studio 14.0\vc\include\crtdefs.h(10): fatal error C1083: Cannot open include file: 'corecrt.h': No such file or directory
+  RegularExpression.cpp
+c:\program files (x86)\microsoft visual studio 14.0\vc\include\crtdefs.h(10): fatal error C1083: Cannot open include file: 'corecrt.h': No such file or directory
+  ReaderST.cpp
+c:\program files (x86)\microsoft visual studio 14.0\vc\include\crtdefs.h(10): fatal error C1083: Cannot open include file: 'corecrt.h': No such file or directory
+  ReaderAF.cpp
+c:\program files (x86)\microsoft visual studio 14.0\vc\include\crtdefs.h(10): fatal error C1083: Cannot open include file: 'corecrt.h': No such file or directory
   Grammar.cpp
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\xtree(1799): warning C4503: '__LINE__Var': decorated name length exceeded, name was truncated
-  c:\program files (x86)\microsoft visual studio 14.0\vc\include\xtree(1095): note: see reference to function template instantiation 'std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<const _Kty,_Ty>>>>,bool> std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>::_Insert_nohint<std::pair<const _Kty,_Ty>&,std::_Tree_node<std::pair<const _Kty,_Ty>,void *>*>(bool,_Valty,_Nodety)' being compiled
-          with
-          [
-              _Kty=std::string,
-              _Ty=std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>,
-              _Pr=std::less<std::string>,
-              _Alloc=std::allocator<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>>,
-              _Valty=std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>> &,
-              _Nodety=std::_Tree_node<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>,void *> *
-          ]
-  c:\program files (x86)\microsoft visual studio 14.0\vc\include\xtree(1094): note: see reference to function template instantiation 'std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<const _Kty,_Ty>>>>,bool> std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>::_Insert_nohint<std::pair<const _Kty,_Ty>&,std::_Tree_node<std::pair<const _Kty,_Ty>,void *>*>(bool,_Valty,_Nodety)' being compiled
-          with
-          [
-              _Kty=std::string,
-              _Ty=std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>,
-              _Pr=std::less<std::string>,
-              _Alloc=std::allocator<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>>,
-              _Valty=std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>> &,
-              _Nodety=std::_Tree_node<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>,void *> *
-          ]
-  c:\users\andre\documents\github\lftlaboratory\prob1\grammar.cpp(335): note: see reference to function template instantiation 'std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<const _Kty,_Ty>>>>,bool> std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>::insert<std::pair<std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char>>>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char>>>>>>>>>(_Valty &&)' being compiled
-          with
-          [
-              _Kty=std::string,
-              _Ty=std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>,
-              _Pr=std::less<std::string>,
-              _Alloc=std::allocator<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>>,
-              _Valty=std::pair<std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>
-          ]
-  c:\users\andre\documents\github\lftlaboratory\prob1\grammar.cpp(335): note: see reference to function template instantiation 'std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<const _Kty,_Ty>>>>,bool> std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>::insert<std::pair<std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char>>>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char>>>>>>>>>(_Valty &&)' being compiled
-          with
-          [
-              _Kty=std::string,
-              _Ty=std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>,
-              _Pr=std::less<std::string>,
-              _Alloc=std::allocator<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>>,
-              _Valty=std::pair<std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>
-          ]
-c:\program files (x86)\microsoft visual studio 14.0\vc\include\xtree(1855): warning C4503: '__LINE__Var': decorated name length exceeded, name was truncated
-  c:\program files (x86)\microsoft visual studio 14.0\vc\include\xtree(1821): note: see reference to function template instantiation 'std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<const _Kty,_Ty>>>> std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>::_Insert_at<std::pair<const _Kty,_Ty>&,_Nodety>(bool,std::_Tree_node<std::pair<const _Kty,_Ty>,void *> *,_Valty,_Nodety)' being compiled
-          with
-          [
-              _Kty=std::string,
-              _Ty=std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>,
-              _Pr=std::less<std::string>,
-              _Alloc=std::allocator<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>>,
-              _Nodety=std::_Tree_node<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>,void *> *,
-              _Valty=std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>> &
-          ]
-  c:\program files (x86)\microsoft visual studio 14.0\vc\include\xtree(1821): note: see reference to function template instantiation 'std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<const _Kty,_Ty>>>> std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>::_Insert_at<std::pair<const _Kty,_Ty>&,_Nodety>(bool,std::_Tree_node<std::pair<const _Kty,_Ty>,void *> *,_Valty,_Nodety)' being compiled
-          with
-          [
-              _Kty=std::string,
-              _Ty=std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>,
-              _Pr=std::less<std::string>,
-              _Alloc=std::allocator<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>>,
-              _Nodety=std::_Tree_node<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>,void *> *,
-              _Valty=std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>> &
-          ]
-  c:\program files (x86)\microsoft visual studio 14.0\vc\include\xtree(1095): note: see reference to function template instantiation 'std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<const _Kty,_Ty>>>>,bool> std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>::_Insert_nohint<std::pair<const _Kty,_Ty>&,std::_Tree_node<std::pair<const _Kty,_Ty>,void *>*>(bool,_Valty,_Nodety)' being compiled
-          with
-          [
-              _Kty=std::string,
-              _Ty=std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>,
-              _Pr=std::less<std::string>,
-              _Alloc=std::allocator<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>>,
-              _Valty=std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>> &,
-              _Nodety=std::_Tree_node<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>,void *> *
-          ]
-  c:\program files (x86)\microsoft visual studio 14.0\vc\include\xtree(1094): note: see reference to function template instantiation 'std::pair<std::_Tree_iterator<std::_Tree_val<std::_Tree_simple_types<std::pair<const _Kty,_Ty>>>>,bool> std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>::_Insert_nohint<std::pair<const _Kty,_Ty>&,std::_Tree_node<std::pair<const _Kty,_Ty>,void *>*>(bool,_Valty,_Nodety)' being compiled
-          with
-          [
-              _Kty=std::string,
-              _Ty=std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>,
-              _Pr=std::less<std::string>,
-              _Alloc=std::allocator<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>>,
-              _Valty=std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>> &,
-              _Nodety=std::_Tree_node<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>,void *> *
-          ]
-c:\users\andre\documents\github\lftlaboratory\prob1\grammar.cpp(1308): warning C4503: 'std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>::_Insert_nohint': decorated name length exceeded, name was truncated
-          with
-          [
-              _Kty=std::string,
-              _Ty=std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>,
-              _Pr=std::less<std::string>,
-              _Alloc=std::allocator<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>>
-          ]
-c:\users\andre\documents\github\lftlaboratory\prob1\grammar.cpp(1308): warning C4503: 'std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>::_Insert_at': decorated name length exceeded, name was truncated
-          with
-          [
-              _Kty=std::string,
-              _Ty=std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>,
-              _Pr=std::less<std::string>,
-              _Alloc=std::allocator<std::pair<const std::string,std::vector<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>,std::allocator<std::pair<std::string,std::vector<std::string,std::allocator<std::string>>>>>>>
-          ]
+c:\program files (x86)\microsoft visual studio 14.0\vc\include\crtdefs.h(10): fatal error C1083: Cannot open include file: 'corecrt.h': No such file or directory
   Generating Code...
-  Prob1.vcxproj -> C:\Users\Andre\Documents\GitHub\LFTLaboratory\Debug\Solution.exe
