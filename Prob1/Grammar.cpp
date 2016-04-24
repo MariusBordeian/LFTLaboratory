@@ -220,6 +220,149 @@ vector<vector<string>> Grammar::getRecursionInfo(vector<string> rulesOfLocalNete
 	return combined;
 }
 
+vector<string> Grammar::getFirst(string neterm) {
+	vector<string> result;
+	vector<string> netermRules = rules.at(neterm);
+	for (unsigned int i = 0; i < netermRules.size(); i++) {
+		if (netermRules[i][0]=='e') { // if neterm -> epsilon
+			result.push_back("e");
+		}
+		else if (indexOfNeterm(string(1, netermRules[i][0]))==-1) { // is terminal 
+			result.push_back(string(1,netermRules[i][0]));
+		}
+		else if (indexOfNeterm(string(1, netermRules[i][0]))>-1) { // is Neterminal
+			result=getFirst(string(1, netermRules[i][0]));
+		}
+	}
+	return result;
+}
+
+map<string, vector<string>> Grammar::getRulesContainingRightValue(string in) {
+	map<string, vector<string>> localRules;
+	vector<string> netermRules;
+	auto k = 0;
+	for (auto rule : rules)
+	{
+		for (unsigned int r = 0; r < rule.second.size(); ++r)
+		{
+			if (rule.second[r].find(in) != string::npos)
+			{
+				netermRules.push_back(rule.second[r]);
+			}
+		}
+		if(netermRules.size()>0){
+			localRules.insert(pair<string, vector<string>>(rule.first, netermRules));
+			netermRules.clear();
+		}
+	}
+	return localRules;
+}
+
+vector<string> Grammar::getFollow(string neterm) {
+	vector<string> result;
+	
+	//if (initialNeterm.compare(neterm) == 0) {
+		result = arraysUnion(result, vector<string>({"$"}));
+	//}
+
+	map<string, vector<string>> netermRules = getRulesContainingRightValue(neterm);
+	for (auto r : netermRules) {
+		for (auto rs : r.second) {
+			int index = rs.find_last_of(neterm);
+			if (index == (rs.size() - 1)) {
+				if(r.first.compare(neterm)!=0){
+					result = arraysUnion(result, getFollow(r.first));
+				}
+			}
+			else if(index!=string::npos){
+				string beta = rs.substr(index+1, 1);
+				if (indexOfNeterm(beta)!=-1) {
+					// beta is nonterminal
+					vector<string> firstOfBeta = first.at(beta);
+					result = arraysUnion(result, arraysMinus(firstOfBeta, vector<string>({ "e" })));
+					if (isIn(string("e",1), firstOfBeta)) {
+						result = arraysUnion(result, getFollow(r.first));
+					}
+				}
+				else {
+					// beta is terminal
+					result = arraysUnion(result, vector<string>({ beta }));
+				}
+			}
+		}
+	}
+	return result;
+}
+
+void Grammar::firstFollow() {
+	// first
+	for (unsigned int i = 0; i < netermsAll.size(); i++) {
+		string localNeterm = netermsAll[i];
+		first.insert(pair<string,vector<string>>(localNeterm, getFirst(localNeterm)));
+	}
+	cout << "First : " << endl;
+	printMap(first);
+	//follow
+
+	for (unsigned int i = 0; i < netermsAll.size(); i++) {
+		string localNeterm = netermsAll[i];
+		follow.insert(pair<string, vector<string>>(localNeterm, getFollow(localNeterm)));
+	}
+	cout <<endl<< "Follow : " << endl;
+	printMap(follow);
+
+	map<string, vector<pair<string, vector<string>>>> parsingTable;
+
+	for (unsigned int i = 0; i < netermsAll.size(); i++) {
+		vector<pair<string, vector<string>>> firstValue;
+		string localNeterm = netermsAll[i];
+		vector<string> firstOfNeterm = first.at(netermsAll[i]);
+		for (auto fi : firstOfNeterm) {
+			if (fi.compare("e") == 0) {
+				vector<string> followOfNeterm = follow.at(netermsAll[i]);
+				for (auto fl : followOfNeterm) {
+					firstValue.push_back(pair<string, vector<string>>(fl, vector<string>({ "e" })));
+				}
+			}
+			else {
+				vector<string> tempVect = getRulesContainingKeyAndValue(localNeterm,fi);
+				if (tempVect.size() == 0) {
+					tempVect = getRulesByKey(localNeterm);
+				}
+				firstValue.push_back(pair<string, vector<string>>(fi, arraysMinus(tempVect, vector<string>({ "e" }))));
+			}
+		}
+		parsingTable.insert(pair<string, vector<pair<string, vector<string>>>>(localNeterm, firstValue));
+		firstValue.clear();
+	}
+	cout << endl << "Parsing table : " << endl;
+	printMap(parsingTable);
+
+}
+vector<string> Grammar::getRulesByKey(string key) {
+	vector<string> temp;
+	for (auto r : rules) {
+		if (r.first.compare(key) == 0) {
+			temp = arraysUnion(temp,r.second);
+		}
+	}
+	return temp;
+}
+
+vector<string> Grammar::getRulesContainingKeyAndValue(string key, string val) {
+	vector<string> temp;
+	for (auto r : rules) {
+		if (r.first.compare(key) == 0) {
+			for (auto vals : r.second) {
+				if (vals.find(val) != string::npos) {
+					temp = arraysUnion(temp, vector<string>({ vals }));
+				}
+			}
+		}
+	}
+	return temp;
+}
+
 void Grammar::cleanUp() {
 	vector<string> N1;
 	bool change = false;
@@ -396,6 +539,8 @@ vector<string> Grammar::getTerms(vector<string> in) const
 	return temp;
 }
 
+
+
 vector<tuple<string, int, int>> Grammar::getKeysContainingValue(string val) const
 {
 	vector<tuple<string, int, int>> keys;
@@ -467,12 +612,14 @@ bool Grammar::checkWordForGrammar(string word)
 			}
 		}
 	}
-	
-	cout << "\nparsing : \n";
-	parse_stack_calls = 0;
-	parse("S", 1, n - 1);
-
-	return V[1][n-1].size() > 0 && isIn("S", V[1][n - 1]);
+	bool output = false;
+	if (V[1][n - 1].size() > 0 && isIn("S", V[1][n - 1])) {
+		cout << "\nparsing : \n";
+		parse_stack_calls = 0;
+		parse("S", 1, n - 1);
+		output = true;
+	}
+	return output;
 }
 
 void Grammar::parse(string neterm, int i, int j)

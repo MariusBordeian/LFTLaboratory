@@ -161,3 +161,31 @@ vector<string> arraysUnion(const vector<string> v1, const vector<string> v2)
 
 	return result;
 }
+
+void printMap(map<string, vector<string>> in) {
+	for (auto pair : in) {
+		cout << pair.first << " -> ";
+		for (auto val : pair.second) {
+			cout << val << "\t";
+		}
+		cout << endl;
+	}
+}
+void printMap(map < string, string> in) {
+	for (auto pair : in) {
+		cout << pair.first << " -> " << pair.second << endl;
+	}
+}
+void printMap(map<string, vector<pair<string, vector<string>>>> in) {
+	for (auto pair : in) {
+		cout << pair.first << " -> { ";
+		for (auto vec : pair.second) {
+			cout << vec.first << " : [ ";
+			for (auto vec2 : vec.second) {
+				cout << vec2 << " ";
+			}
+			cout << "]\t";
+		}
+		cout <<" }"<<endl;
+	}
+}

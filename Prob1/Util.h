@@ -4,6 +4,8 @@
 #include <vector>
 #include <tuple>
 #include <sstream>
+#include <map>
+#include <iostream>
 
 using namespace std;
 
@@ -19,3 +21,6 @@ vector<string> split(const string &s, char delim);
 vector<string> arraysMinus(const vector<string>, const vector<string>);
 vector<string> arraysIntersection(const vector<string>, const vector<string>);
 vector<string> arraysUnion(const vector<string>, const vector<string>);
+void printMap(map < string, vector<string>>);
+void printMap(map < string, string>);
+void printMap(map<string, vector<pair<string, vector<string>>>>);

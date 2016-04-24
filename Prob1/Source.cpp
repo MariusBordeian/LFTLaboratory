@@ -250,7 +250,8 @@ int GR()
 			1 : show rules\n\
 			2 : Clean\n\
 			3 : Remove left redundancy\n\
-			4 : check word for this grammar.\t eg.: baaba\n";
+			4 : check word for this grammar.\t eg.: baaba\n\
+			5 : First/Follow\n";
 		cout << "\nselect option : ";
 		cin >> user;
 		cin.clear();
@@ -279,6 +280,10 @@ int GR()
 				cin >> word;
 				cout << endl << (g.checkWordForGrammar(word) ? word + " poate fi generat de catre gramatica" : word + " NU poate fi generat de catre gramatica") << endl;
 			} break;
+		case 5: {
+			g.firstFollow();
+
+		} break;
 		}
 
 		filePath_2 = string(path);

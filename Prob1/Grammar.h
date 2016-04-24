@@ -52,6 +52,9 @@ public:
 	string minimizeAFD();
 	void removeUselessNeterms();
 	void generateGrammar();
+	void firstFollow();
+	vector<string> getFirst(string);
+	vector<string> getFollow(string);
 	int indexOfSymb(string) const;
 	vector<vector<string>> getRecursionInfo(vector<string>, int);
 	vector<string> getEligibleRulesForReplacing(vector<string>, unsigned int);
@@ -65,6 +68,10 @@ public:
 	vector<string> getContainingNeterms(vector<string>) const;
 	vector<string> getTerms(vector<string>) const;
 	vector<tuple<string, int, int>> getKeysContainingValue(string) const;
+	map<string,vector<string>> getRulesContainingRightValue(string);
+	vector<string> getRulesContainingKeyAndValue(string,string);
+	vector<string> getRulesByKey(string);
+	
 	bool checkWordForGrammar(string word);
 	int validateWord(string);
 	void showPath(string, string);
@@ -88,6 +95,9 @@ public:
 	vector<string> symbols;
 	map<string,vector<string>> rules;
 	vector<vector<vector<tuple<string, int, int>>>> V;		// CYK
+	
+	map<string, vector<string>> first;						// First
+	map<string, vector<string>> follow;						// Follow
 
 	struct infoStruct
 	{
